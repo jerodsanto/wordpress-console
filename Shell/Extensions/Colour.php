@@ -52,9 +52,9 @@ class PHP_Shell_Extensions_Colour implements PHP_Shell_Extension {
 
         $this->registerColourScheme(
             "dark", array( 
-                "default"   => self::C_YELLOW, 
-                "value"     => self::C_WHITE,
-                "exception" => self::C_PURPLE));
+                "default"   => self::C_WHITE, 
+                "value"     => self::C_YELLOW,
+                "exception" => self::C_RED));
 
         $this->registerColourScheme(
             "light", array( 

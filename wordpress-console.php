@@ -20,28 +20,28 @@ require_once "Shell/Extensions/ExecutionTime.php";
 require_once "Shell/Extensions/InlineHelp.php";
 require_once "Shell/Extensions/VerbosePrint.php";
 require_once "Shell/Extensions/LoadScript.php";
-require_once dirname(__FILE__) . "/../../../wp-blog-header.php";
+require_once dirname(__FILE__) . "/../../../wp-load.php";
     
 /**
 * default error-handler
 *
-* Instead of printing the NOTICE or WARNING from php we wan't the turn non-FATAL
+* Instead of printing the NOTICE or WARNING from php we want to turn non-FATAL
 * messages into exceptions and handle them in our own way.
 *
-* you can set your own error-handler by createing a function named
+* you can set your own error-handler by creating a function named
 * __shell_error_handler
 *
 * @param integer $errno Error-Number
 * @param string $errstr Error-Message
 * @param string $errfile Filename where the error was raised
-* @param interger $errline Line-Number in the File
+* @param integer $errline Line-Number in the File
 * @param mixed $errctx ...
 */
 function __shell_default_error_handler($errno, $errstr, $errfile, $errline, $errctx) {
     ## ... what is this errno again ?
-    if ($errno == 2048) return;
-  
-    throw new Exception(sprintf("%s:%d\r\n%s", $errfile, $errline, $errstr));
+    // if ($errno == 2048) return;
+    //   
+    // throw new Exception(sprintf("%s:%d\r\n%s", $errfile, $errline, $errstr));
 }
 
 set_error_handler("__shell_default_error_handler");
@@ -50,7 +50,6 @@ $__shell = new PHP_Shell();
 $__shell_exts = PHP_Shell_Extensions::getInstance();
 $__shell_exts->registerExtensions(array(
     "options"        => PHP_Shell_Options::getInstance(), /* the :set command */
-
     "autoload"       => new PHP_Shell_Extensions_Autoload(),
     "autoload_debug" => new PHP_Shell_Extensions_AutoloadDebug(),
     "colour"         => new PHP_Shell_Extensions_Colour(),
@@ -59,16 +58,17 @@ $__shell_exts->registerExtensions(array(
     "verboseprint"   => new PHP_Shell_Extensions_VerbosePrint(),
     "loadscript"     => new PHP_Shell_Extensions_LoadScript(),
 ));
+$__shell_exts->colour->applyColourScheme("dark");
 
 $f = <<<EOF
-WordPress Console (Version 0.1.0)
+WordPress Console (0.1.0)%s
 
 >> use '?' to open the inline help 
 
 EOF;
 
 printf($f, 
-    $__shell->hasReadline() ? ', with readline() support' : '');
+    $__shell->hasReadline() ? '' : ', no readline() support (tab-completion)');
 unset($f);
 
 print $__shell_exts->colour->getColour("default");
@@ -105,7 +105,6 @@ while($__shell->input()) {
             ## we have a full command, execute it
 
             $__shell_exts->exectime->startExecTime();
-
             $__shell_retval = eval($__shell->getCode()); 
             if (isset($__shell_retval)) {
                 print $__shell_exts->colour->getColour("value");
@@ -122,8 +121,7 @@ while($__shell->input()) {
         }
     } catch(Exception $__shell_exception) {
         print $__shell_exts->colour->getColour("exception");
-        printf('%s (code: %d) got thrown'.PHP_EOL, get_class($__shell_exception), $__shell_exception->getCode());
-        print $__shell_exception;
+        print $__shell_exception->getMessage();
         
         $__shell->resetCode();
 
