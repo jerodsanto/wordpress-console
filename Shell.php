@@ -135,8 +135,8 @@ class PHP_Shell {
 
         $cmd = PHP_Shell_Commands::getInstance();
 
-        $cmd->registerCommand('#^quit$#', $this, 'cmdQuit', 'quit', 'leaves the shell');
-        $cmd->registerCommand('#^exit$#', $this, 'cmdQuit', 'exit', 'leaves the shell');
+        // $cmd->registerCommand('#^reload!$#', $this, 'cmdReload', 'reload!', 'reloads environment');
+        $cmd->registerCommand('#^quit$#', $this, 'cmdQuit', 'quit or exit', 'leaves the shell');
         $cmd->registerCommand('#^\?$#', $this, 'cmdHelp', '?', 'show this help');
     }
 
@@ -762,6 +762,15 @@ class PHP_Shell {
 
         return var_export($o, 1);
     }
+    
+    /**
+    * handle the 'reload!' command
+    *
+    * @return bool true if successful
+    */
+    // protected function cmdReload() {
+    //       return true;
+    //     }
     
     /**
     * handle the 'quit' command
