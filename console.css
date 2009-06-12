@@ -1,0 +1,76 @@
+#wrapper {
+  margin-right: 10px;
+}
+#wrapper #shell {
+  display: block;
+  padding: 5px 10px;
+  overflow: auto;
+  cursor: text;
+  height: 400px;
+}
+#wrapper #shell .row,
+#wrapper #shell .row form {
+  display: inline;
+  margin-left: 5px;
+  line-height: 20px;
+}
+#wrapper #shell .row form input {
+  border: none;
+}
+#wrapper #shell .result {
+  line-height: 20px;
+}
+#wrapper #shell .result pre {
+  margin: 0;
+}
+/**
+* colors
+*/
+#wrapper #header {
+  background-color: #DAFFBD;
+  color: #668040;
+}
+#wrapper #shell {
+  background-color: #000000;
+  color: #FFFFFF;
+}
+#wrapper #shell .prompt {
+  color: #fafbb9;
+}
+#wrapper #shell input {
+  background-color: #000000;
+  color: #FFFFFF;
+}
+#wrapper #shell .error {
+  color: #FF0000;
+}
+#wrapper #shell a:link,
+#wrapper #shell a:visited {
+  color: #FFFFFF;
+}
+/**
+* fonts
+*/
+#wrapper #header {
+  font-family: 'lucida grande', 'lucida sans unicode', 'lucida sans', 'frutiger linotype', sans-serif;
+  font-size: 1em;
+}
+#wrapper #shell {
+  font-family: monaco, 'lucida console', 'courier new', 'courier', monospace;
+  font-size: 10pt;
+  line-height: 1.25em;
+}
+#wrapper #shell .prompt {
+  font-weight: bold;
+}
+#wrapper #shell input {
+  font-family: monaco, 'lucida console', 'courier new', 'courier', monospace;
+  font-size: 10pt;
+}
+#wrapper #shell .result {
+  font-size: 10pt;
+}
+#wrapper #shell .result pre {
+  font-size: 10pt;
+  font-family: monaco, 'lucida console', 'courier new', 'courier', monospace;
+}
