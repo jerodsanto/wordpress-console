@@ -37,10 +37,12 @@ var consoleController = {
 					break;
 				case 40: // down
 					nextQuery = self.queries[self.historyCounter+1];
+          self.historyCounter++;
 					if (typeof nextQuery != "undefined") {
-						self.historyCounter++;
 						self.shell.find('input').val(nextQuery);
-					}
+					}  else {
+            self.shell.find('input').val("");
+          }
 					break;
 				case 9: // tab
 					partial = self.shell.find('input').val();
@@ -102,51 +104,52 @@ var consoleController = {
 		
 		// listen for submit
 		self.shell.find('div#' + self.counter + ' form').submit(function(e) {
+		  var input = self.shell.find('div#' + self.counter + ' input').val();
 		
 			// do not use normal http post
 			e.preventDefault();
 			
 			// if input field is empty, don't do anything
-			if (self.shell.find('div#' + self.counter + ' input').val() == '') return false;
+			if (input == '') return false;
 			
-			// send ajax request
-			jQuery.ajax({
-				url:      self.url + 'query.php',
-				type:     'POST',
-				dataType: 'json',
-				data : {
-					query:      self.shell.find('div#' + self.counter + ' input').val(),
-					PHPSESSID:  self.PHPSESSID
-				},
-				success: function(j) {
-				
-					// if result is not an error
-					if (self.check(j)) {
-				
-						// if result is not javascript
-						if (typeof j.javascript == 'undefined') {
-							// print result to shell
-							self.print(j.result);
-						} else {
-							// execute javascript
-							eval(j.result);
-						}
-				
-						// get value of query
-						val = self.shell.find('input').val();
-						// replace input with query
-						self.shell.find('input').parent().empty().append(val);
-				
-            // save query
-            self.queries[self.counter] = val;
-          }
-          // do another prompt
-          self.doPrompt(j);
+			// otherwise, handle accordingly
+      switch(input) {
+        case "clear":
+          // do stuff
+          break;
+        case "help":
+          self.print("this is the help text");
+          // do stuff
+          break;
+        default:
+          // send ajax request
+          jQuery.ajax({
+            url:      self.url + 'query.php',
+            type:     'POST',
+            dataType: 'json',
+            data : {
+              query:      input,
+              PHPSESSID:  self.PHPSESSID
+            },
+            success: function(j) {
+              // if result is not an error
+              if (self.check(j)) {
+                // print result to shell
+                self.print(j.result);
+              }
+            }
+          });
+        } // end case
+          
+        // get value of query
+        val = self.shell.find('input').val();
+        // replace input with query
+        self.shell.find('input').parent().empty().append(val);
 
-					}
-				
-			});
-
+        // save query
+        self.queries[self.counter] = val;
+        self.doPrompt();
+        
 		});
 
 	},
