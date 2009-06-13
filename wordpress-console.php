@@ -22,7 +22,7 @@ function console_admin_page() {
   // session_start();
   
   echo '<div id="wrap">';
-  echo '<h2>WordPress Console</h2>';
+  echo '<h2>WordPress Console: "?" or "help"</h2>';
   echo '<div id="wrapper">';
   echo '</div>';
   echo '</div>';
