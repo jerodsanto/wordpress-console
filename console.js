@@ -32,16 +32,16 @@ var consoleController = {
 					lastQuery = self.queries[self.historyCounter-1];
 					if (typeof lastQuery != "undefined") {
 						self.historyCounter--;
-						self.shell.find('input').val(lastQuery);
+						self.shell.find('input.current').val(lastQuery);
 					}
 					break;
 				case 40: // down
 					nextQuery = self.queries[self.historyCounter+1];
           self.historyCounter++;
 					if (typeof nextQuery != "undefined") {
-						self.shell.find('input').val(nextQuery);
+						self.shell.find('input.current').val(nextQuery);
 					}  else {
-            self.shell.find('input').val("");
+            self.shell.find('input.current').val("");
           }
 					break;
 				case 9: // tab
@@ -98,27 +98,32 @@ var consoleController = {
 		// prompt text
 		prompt = self.user + '@' + self.wp_version + '$';
 		// append prompt to shell
-		self.shell.append('<div class="row" id="' + self.counter + '"><span class="prompt">' + prompt + '</span><form><input type="text" /></form></div>');
+		self.shell.append('<div class="row" id="' + self.counter + '"><span class="prompt">' + prompt + '</span><form><input class="current" type="text" /></form></div>');
 		// focus input
 		self.shell.find('div#' + self.counter + ' input').focus();
 		
 		// listen for submit
 		self.shell.find('div#' + self.counter + ' form').submit(function(e) {
-		  var input = self.shell.find('div#' + self.counter + ' input').val();
+		  var input = self.shell.find('div#' + self.counter + ' input');
+		  var val = input.val();
 		
 			// do not use normal http post
 			e.preventDefault();
 			
 			// if input field is empty, don't do anything
-			if (input == '') return false;
+			if (val == '') return false;
 			
-			// otherwise, handle accordingly
-      switch(input) {
-        case "clear": case "cls":
+			// otherwise, save in history and handle accordingly
+      input.removeClass("current");
+			self.queries[self.counter] = val;
+      switch(val) {
+        case "clear": case "c":
           jQuery('#shell #header').siblings().empty();
+          self.doPrompt()
           break;
         case "help": case "?":
           self.print("this is the help text");
+          self.doPrompt()
           break;
         default:
           jQuery.ajax({
@@ -126,22 +131,24 @@ var consoleController = {
             type:     'POST',
             dataType: 'json',
             data : {
-              query:      input,
+              query:      val,
               PHPSESSID:  self.PHPSESSID
             },
             success: function(j) {
               // if result is not an error
               if (self.check(j)) {
-                // print result to shell
-                self.print(j.result);
+                // print output and return value if they exist
+                if (j.return.length > 0) {
+                  self.print("=> " + j.return);
+                }
+                if (j.output.length > 0) {
+                  self.print(j.output);
+                }
+                self.doPrompt();
               }
             }
           });
         } // end case
-          
-        // save query
-        self.queries[self.counter] = input;
-        self.doPrompt();
 		});
 
 	},
@@ -171,7 +178,7 @@ var consoleController = {
 
 	inputSize : function() {
 		// increase the size of the input box when the user types more
-		this.shell.find('input').attr('size', (this.shell.find('input').val().length + 5)).focus();
+		this.shell.find('input.current').attr('size', (this.shell.find('input.current').val().length + 5)).focus();
 	},
 
 	destruct : function() {} // ... 

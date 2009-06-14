@@ -5,26 +5,28 @@ require('common.php');
 error_reporting(E_ALL);
 set_time_limit(0);
 
-require_once "Shell.php";
-
-$__shell = new PHP_Shell();
-
 
 if (isset($_POST['query'])) {
-  $query = trim($_POST['query']);
+  $query = stripslashes($_POST['query']);
 
-  try {
-    if ($__shell->parse() == 0) {
-      ## we have a full command, execute it
-
-      $__shell_retval = eval($__shell->getCode()); 
-      if (isset($__shell_retval)) {
-        print json_encode(array('result' => $__shell_retval));
-      }
+  if (parse($query) == 0) {
+    $response = array('return' => '', 'output'=> '');
+    
+    ob_start(); // start output buffer (to capture prints)
+    $rval = eval($_SESSION['code']);
+    
+    if ($rval != NULL) { // eval'd code had a return value
+      $response['return'] = $rval;
     }
-  } catch(Exception $__shell_exception) {
-    error('Error executing statement.');
+    $response['output'] = ob_get_contents();
+    
+    ob_end_clean(); // quietly discard buffered output
+    print json_encode($response);
+    $_SESSION['code'] = ''; // clear the code buffer
+  } else {
+    print json_encode(array('output' => 'not a complete statement'));
   }
+  
 } else {
   error('Error initializing session.');
 }
