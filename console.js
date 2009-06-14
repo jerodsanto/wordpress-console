@@ -138,14 +138,14 @@ var consoleController = {
               // if result is not an error
               if (self.check(j)) {
                 // print output and return value if they exist
-                if (j.return.length > 0) {
-                  self.print("=> " + j.return);
+                if (typeof j.rval != "undefined") {
+                  self.print("=> " + j.rval);
                 }
-                if (j.output.length > 0) {
+                if (typeof j.output != "undefined") {
                   self.print(j.output);
                 }
-                self.doPrompt();
               }
+              self.doPrompt();
             }
           });
         } // end case
@@ -168,7 +168,7 @@ var consoleController = {
 
 		// make sure json result is not an error
 		if (typeof json.error != "undefined") {
-			this.shell.append('<div class="error">Error: ' + json.error + '</div>');
+			this.shell.append('<div class="err">Error: ' + json.error + '</div>');
 			return false;
 		} else {
 			return true;

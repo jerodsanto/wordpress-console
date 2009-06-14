@@ -1,6 +1,13 @@
 #wrapper {
   margin-right: 10px;
 }
+#wrapper #shell #header {
+  font-family: 'lucida grande', 'lucida sans unicode', 'lucida sans', 'frutiger linotype', sans-serif;
+  font-size: 1em;
+}
+#wrapper #shell #header a{
+  text-decoration:none;
+}
 #wrapper #shell {
   display: block;
   padding: 5px 10px;
@@ -9,9 +16,10 @@
   height: 400px;
   background-color: #000000;
   color: #FFFFFF;
-}
-#wrapper #shell #header a{
-  text-decoration:none;
+  font-family: monaco, 'lucida console', 'courier new', 'courier', monospace;
+  font-size: 10pt;
+  line-height: 1.25em;
+  
 }
 #wrapper #shell .row,
 #wrapper #shell .row form {
@@ -22,25 +30,20 @@
   border: none;
 }
 #wrapper #shell .result {
-  font-size: 10pt;
   line-height: 20px;
   margin-left: 10px;
 }
-#wrapper #shell .result pre {
-  margin: 0 10px 0 0;
-}
-/**
-* colors
-*/
 #wrapper #shell .prompt {
   color: #fafbb9;
+  font-weight: bold;
 }
 #wrapper #shell input {
   background-color: #000000;
   color: #FFFFFF;
 }
-#wrapper #shell .error {
+#wrapper #shell .err {
   color: #FF0000;
+  margin-left: 10px;
 }
 #wrapper #shell a:link,
 #wrapper #shell a:visited {
@@ -49,18 +52,6 @@
 /**
 * fonts
 */
-#wrapper #header {
-  font-family: 'lucida grande', 'lucida sans unicode', 'lucida sans', 'frutiger linotype', sans-serif;
-  font-size: 1em;
-}
-#wrapper #shell {
-  font-family: monaco, 'lucida console', 'courier new', 'courier', monospace;
-  font-size: 10pt;
-  line-height: 1.25em;
-}
-#wrapper #shell .prompt {
-  font-weight: bold;
-}
 #wrapper #shell input {
   font-family: monaco, 'lucida console', 'courier new', 'courier', monospace;
   font-size: 10pt;
