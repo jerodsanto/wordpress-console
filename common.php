@@ -1,6 +1,10 @@
 <?php
 require_once dirname(__FILE__) . "/../../../wp-load.php";
 
+@ob_end_clean();
+error_reporting(E_ALL);
+set_time_limit(0);
+
 if (!function_exists('json_encode')) {
 	function json_encode($value) {
 		@require_once('lib/FastJSON.class.php');

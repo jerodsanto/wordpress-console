@@ -7,8 +7,7 @@ if (isset($_POST['init'])) {
   
   print json_encode(array(
     'user'        => $current_user->user_login,
-    'wp_version'  => 'wp-' . get_bloginfo('version'),
-    'PHPSESSID'   => htmlspecialchars(session_id())
+    'wp_version'  => 'wp-' . get_bloginfo('version')
     ));
 } else {
   error('Error initializing session.');

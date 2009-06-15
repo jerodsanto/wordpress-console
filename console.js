@@ -6,7 +6,7 @@ var consoleController = {
 
 	historyCounter : 0,
 
-	init : function() {
+	init: function() {
 
 		var self = this;
 		
@@ -44,29 +44,30 @@ var consoleController = {
             self.shell.find('input.current').val("");
           }
 					break;
-				case 9: // tab
-					partial = self.shell.find('input').val();
-					// complete partial query (make sure it's a normal input, not a username/password field)
-					if (self.shell.find('input').parent().parent().attr('class') == 'row') {
-						jQuery.getJSON('complete.php', {partial: partial, PHPSESSID: self.PHPSESSID}, function(json) {
-							// replace partial with complete and restore focus
-							self.shell.find('input').val(json.result).focus();
-						});
-					}
+        // case 9: // tab
+        //           partial = self.shell.find('input').val();
+        //           // complete partial query (make sure it's a normal input, not a username/password field)
+        //           jQuery.ajax({
+        //             url:      self.url + 'complete.php',
+        //             type:     'POST',
+        //             dataType: 'json',
+        //             data:     { partial: partial }, 
+        //             success:  function(j) {
+        //               // replace partial with complete and restore focus
+        //               if (self.check(j)) {
+        //                 j.each
+        //               }
+        //             }
+        //           });
 			}
 			
 		});
 
-		// watch input field
-		jQuery(document).keypress(function() { self.inputSize(); });
-
-		// about
 		self.about();
-    
     self.doInit();
 	},
 	
-	doInit : function() {
+	doInit: function() {
 	  
 	  var self = this;
 	  
@@ -74,11 +75,8 @@ var consoleController = {
 	    url:      self.url + 'init.php',
 	    type:     'POST',
 	    dataType: 'json',
-	    data: {
-	      init: true
-	    },
-	    success: function(j) {
-	      self.PHPSESSID = j.PHPSESSID;
+	    data:     { init: true },
+	    success:  function(j) {
 	      self.user = j.user;
 	      self.wp_version = j.wp_version;
 	      self.doPrompt();
@@ -86,7 +84,7 @@ var consoleController = {
 	  })
 	},
 
-	doPrompt : function() {
+	doPrompt: function() {
 
 		var self = this;
 
@@ -101,6 +99,9 @@ var consoleController = {
 		self.shell.append('<div class="row" id="' + self.counter + '"><span class="prompt">' + prompt + '</span><form><input class="current" type="text" /></form></div>');
 		// focus input
 		self.shell.find('div#' + self.counter + ' input').focus();
+		
+		// watch input field
+		jQuery(document).keypress(function() { self.inputSize(); });
 		
 		// listen for submit
 		self.shell.find('div#' + self.counter + ' form').submit(function(e) {
@@ -130,11 +131,8 @@ var consoleController = {
             url:      self.url + 'query.php',
             type:     'POST',
             dataType: 'json',
-            data : {
-              query:      val,
-              PHPSESSID:  self.PHPSESSID
-            },
-            success: function(j) {
+            data:     { query: val},
+            success:  function(j) {
               // if result is not an error
               if (self.check(j)) {
                 // print output and return value if they exist
@@ -153,18 +151,18 @@ var consoleController = {
 
 	},
 	
-	about : function() {
+	about: function() {
 	  var str = '<div id="header">' + 
 	            'WordPress Console [0.1.0] by <a target="_blank" href="http://jerodsanto.net">Jerod Santo</a>' +
 	            '</div>';
 	  this.shell.append(str);
 	},
 
-	print : function(string) {
+	print: function(string) {
 		this.shell.append('<div class="result"><pre>' + string + '</pre></div>');
 	},
 
-	check : function(json) {
+	check: function(json) {
 
 		// make sure json result is not an error
 		if (typeof json.error != "undefined") {
@@ -176,12 +174,10 @@ var consoleController = {
 
 	},
 
-	inputSize : function() {
+	inputSize: function() {
 		// increase the size of the input box when the user types more
 		this.shell.find('input.current').attr('size', (this.shell.find('input.current').val().length + 5)).focus();
 	},
 
-	destruct : function() {} // ... 
-	
 }
 jQuery(document).ready(function() { consoleController.init(); });
