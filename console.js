@@ -1,9 +1,7 @@
 var consoleController = {
 
 	counter : 0,
-
 	queries : [],
-
 	historyCounter : 0,
 
 	init: function() {
@@ -46,7 +44,6 @@ var consoleController = {
 					break;
         // case 9: // tab
         //           partial = self.shell.find('input').val();
-        //           // complete partial query (make sure it's a normal input, not a username/password field)
         //           jQuery.ajax({
         //             url:      self.url + 'complete.php',
         //             type:     'POST',
@@ -64,26 +61,9 @@ var consoleController = {
 		});
 
 		self.about();
-    self.doInit();
+    self.doPrompt();
 	},
 	
-	doInit: function() {
-	  
-	  var self = this;
-	  
-	  jQuery.ajax({
-	    url:      self.url + 'init.php',
-	    type:     'POST',
-	    dataType: 'json',
-	    data:     { init: true },
-	    success:  function(j) {
-	      self.user = j.user;
-	      self.wp_version = j.wp_version;
-	      self.doPrompt();
-	    }
-	  })
-	},
-
 	doPrompt: function() {
 
 		var self = this;
@@ -94,7 +74,7 @@ var consoleController = {
 		self.historyCounter = self.counter;
 		
 		// prompt text
-		prompt = self.user + '@' + self.wp_version + '$';
+		prompt = '>>';
 		// append prompt to shell
 		self.shell.append('<div class="row" id="' + self.counter + '"><span class="prompt">' + prompt + '</span><form><input class="current" type="text" /></form></div>');
 		// focus input
