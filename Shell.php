@@ -694,9 +694,6 @@ class PHP_Shell {
             $eval = "return ".$eval;
         }
  
-        /* add a traling ; if necessary */ 
-        if ($need_semicolon) $eval .= ';';
-        
         if (!$need_more) {
             $this->code = $eval;
         }

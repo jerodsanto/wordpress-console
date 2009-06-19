@@ -28,6 +28,7 @@
 }
 #wrapper #shell .row form input {
   border: none;
+  outline: none;
 }
 #wrapper #shell .result {
   line-height: 20px;
