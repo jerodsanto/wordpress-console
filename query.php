@@ -1,6 +1,8 @@
 <?php
 require('common.php');
 
+set_error_handler('console_error_handler');
+
 if (isset($_POST['query'])) {
   $existing_vars = get_defined_vars();
 

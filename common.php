@@ -16,8 +16,8 @@ if (!function_exists('json_encode')) {
 	}
 }
 
-function fatal_error_handler($error) {
-  error($error);
+function console_error_handler($errno,$errorstr) {
+  error($errorstr);
 }
 
 function error($error) {
@@ -49,11 +49,9 @@ function save_variables($existing, $current, $ignore) {
   $_SESSION['console_vars'] = var_export($save_vars,true);
 }
 
-/**
-* parse the PHP code
-*
-* @return int 0 if a executable statement is in the session buffer, non-zero otherwise
-*/
+// this function was yoinked (and adjusted) from the 'php shell' project. See:
+// http://jan.kneschke.de/projects/php-shell
+// return int 0 if a executable statement is in the session buffer, non-zero otherwise
 function parse($code) {
     ## remove empty lines
     if (trim($code) == '') return 1;

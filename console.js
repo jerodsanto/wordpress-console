@@ -16,8 +16,22 @@ var consoleController = {
 
 		// listen for clicks on the shell
 		self.shell.click(function() {
-			self.shell.find('input').focus();
+			self.shell.find('input.current').focus();
 		});
+		
+		// always move cursor to end of input
+		jQuery(':text').bind('focus', function() {
+            var o = this;
+            if(o.setSelectionRange) {     /* DOM */
+                setTimeout(function()
+    {o.setSelectionRange(o.value.length,o.value.length);}, 2);
+            } else if(o.createTextRange) {    /* IE */
+                var r = o.createTextRange();
+                r.moveStart('character', o.value.length);
+                r.select();
+            }
+        });
+    
 
 		// listen for key presses (up, down, and tab)
 		jQuery(document).keydown(function(e) {
@@ -30,7 +44,8 @@ var consoleController = {
 					lastQuery = self.queries[self.historyCounter-1];
 					if (typeof lastQuery != "undefined") {
 						self.historyCounter--;
-						self.shell.find('input.current').val(lastQuery);
+						var input = self.shell.find('input.current');
+						input.val(lastQuery);
 					}
 					break;
 				case 40: // down
@@ -42,20 +57,10 @@ var consoleController = {
             self.shell.find('input.current').val("");
           }
 					break;
-        // case 9: // tab
-        //           partial = self.shell.find('input').val();
-        //           jQuery.ajax({
-        //             url:      self.url + 'complete.php',
-        //             type:     'POST',
-        //             dataType: 'json',
-        //             data:     { partial: partial }, 
-        //             success:  function(j) {
-        //               // replace partial with complete and restore focus
-        //               if (self.check(j)) {
-        //                 j.each
-        //               }
-        //             }
-        //           });
+        case 9: // tab
+          alert("tab-completion (hopefully) coming soon!");
+          return false;
+          break;
 			}
 			
 		});
@@ -86,11 +91,11 @@ var consoleController = {
     
 		// append prompt to shell
 		self.shell.append('<div class="row" id="' + self.counter + '"><span class="prompt">' + prompt + '</span><form><input class="current" type="text" /></form></div>');
-		// focus input
-		self.shell.find('div#' + self.counter + ' input').focus();
 		
-		// watch input field
-		jQuery(document).keypress(function() { self.inputSize(); });
+		// determine input width
+		var input_width = self.shell.width() - 50;
+		// set width and focus input
+		self.shell.find('div#' + self.counter + ' input').width(input_width).focus();
 		
 		// listen for submit
 		self.shell.find('div#' + self.counter + ' form').submit(function(e) {
@@ -100,7 +105,7 @@ var consoleController = {
 			// do not use normal http post
 			e.preventDefault();
 			
-			// otherwise, save in history and handle accordingly
+			// save in history and handle accordingly
       input.removeClass("current");
 			self.queries[self.counter] = val;
       switch(val) {
@@ -109,10 +114,10 @@ var consoleController = {
           self.doPrompt()
           break;
         case "help": case "?":
-          self.print("Special Commands:\n\n" + 
-                      "clear  (c) = clears the console output\n" +
-                      "help   (h) = prints this help text\n" +
-                      "reload (r) = flushes all variables and partial statements");
+          self.print("Special Commands:\n" + 
+                      "  clear  (c) = clears the console output\n" +
+                      "  help   (?) = prints this help text\n" +
+                      "  reload (r) = flushes all variables and partial statements");
           self.doPrompt()
           break;
         case "reload": case "r":
@@ -156,7 +161,7 @@ var consoleController = {
               }
             },
             error:  function() {
-              self.error("Something went wrong. Did you forget the semicolon? Try the 'reload' command");
+              self.error("Most likely syntax. Forget the semicolon? If not, try 'reload' and re-execute");
               self.doPrompt();
             }
           });
@@ -189,13 +194,7 @@ var consoleController = {
 		} else {
 			return true;
 		}
-
-	},
-
-	inputSize: function() {
-		// increase the size of the input box when the user types more
-		this.shell.find('input.current').attr('size', (this.shell.find('input.current').val().length + 5)).focus();
-	},
-
+	}
+	
 }
 jQuery(document).ready(function() { consoleController.init(); });

@@ -34,11 +34,18 @@
   line-height: 20px;
   margin-left: 10px;
 }
+#wrapper #shell .result pre {
+  font-size: 10pt;
+  font-family: monaco, 'lucida console', 'courier new', 'courier', monospace;
+}
+
 #wrapper #shell .prompt {
   color: #fafbb9;
   font-weight: bold;
 }
 #wrapper #shell input {
+  font-family: monaco, 'lucida console', 'courier new', 'courier', monospace;
+  font-size: 10pt;
   background-color: #000000;
   color: #FFFFFF;
 }
@@ -49,15 +56,4 @@
 #wrapper #shell a:link,
 #wrapper #shell a:visited {
   color: #FFFFFF;
-}
-/**
-* fonts
-*/
-#wrapper #shell input {
-  font-family: monaco, 'lucida console', 'courier new', 'courier', monospace;
-  font-size: 10pt;
-}
-#wrapper #shell .result pre {
-  font-size: 10pt;
-  font-family: monaco, 'lucida console', 'courier new', 'courier', monospace;
 }
