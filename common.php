@@ -46,7 +46,11 @@ function save_variables($existing, $current, $ignore) {
     }
   }
   
-  $_SESSION['console_vars'] = var_export($save_vars,true);
+  // purge any references to stdClass::__set_state() as advised here:
+  // http://drupal.org/node/215375
+  $export = var_export($save_vars,true);
+  $final  = preg_replace("/stdClass::__set_state\((.*)\)/Ums",'$1',$export);
+  $_SESSION['console_vars'] = $final;
 }
 
 // this function was yoinked (and adjusted) from the 'php shell' project. See:
