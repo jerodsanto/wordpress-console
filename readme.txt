@@ -42,6 +42,10 @@ Coming to a version near you.
 
 You should fork the project on [GitHub](http://github.com/sant0sk1/wordpress-console) and help add it!
 
+== Screenshots ==
+
+1.  The console
+
 == Changelog ==
 
 = 0.1.0 =
