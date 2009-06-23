@@ -2,6 +2,11 @@
 require('common.php');
 
 if (isset($_POST['query'])) {
+  $existing_vars = get_defined_vars();
+
+  // restore session variables
+  extract(eval("return " . $_SESSION['console_vars'] . ";"));
+  
   $query = stripslashes($_POST['query']);
 
   try {
@@ -29,6 +34,13 @@ if (isset($_POST['query'])) {
   } catch(Exception $exception) {
     error($exception->getMessage());
   }
+  
+  // store variables to session
+  $current_vars = get_defined_vars();
+
+  save_variables($existing_vars,
+                 $current_vars,
+                 array('query','response','rval','existing_vars','current_vars','_SESSION'));
 
 } else {
   error('Error initializing session.');

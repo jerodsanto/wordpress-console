@@ -1,6 +1,10 @@
 <?php
 require_once dirname(__FILE__) . "/../../../wp-load.php";
 
+if (!session_id()) {
+  session_start();
+}
+
 @ob_end_clean();
 error_reporting(E_ALL);
 set_time_limit(0);
@@ -23,6 +27,24 @@ function logit($msg) {
   fwrite($fh,"\n\n");
   fclose($fh);
 }
+
+// saves newly defined variables to session.
+// somebody please refactor this!
+function save_variables($existing, $current, $ignore) {
+  $new_vars  = array_diff(array_keys($current),array_keys($existing));
+  $user_vars = array_diff($new_vars,$ignore);
+  
+  $save_vars = array();
+  
+  foreach($current as $key => $value) {
+    if (in_array($key,$user_vars)) {
+      $save_vars[$key] = $value;
+    }
+  }
+  
+  $_SESSION['console_vars'] = var_export($save_vars,true);
+}
+
 /**
 * parse the PHP code
 *
