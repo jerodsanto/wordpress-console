@@ -19,20 +19,6 @@ var consoleController = {
 			self.shell.find('input.current').focus();
 		});
 		
-		// always move cursor to end of input
-		jQuery(':text').bind('focus', function() {
-            var o = this;
-            if(o.setSelectionRange) {     /* DOM */
-                setTimeout(function()
-    {o.setSelectionRange(o.value.length,o.value.length);}, 2);
-            } else if(o.createTextRange) {    /* IE */
-                var r = o.createTextRange();
-                r.moveStart('character', o.value.length);
-                r.select();
-            }
-        });
-    
-
 		// listen for key presses (up, down, and tab)
 		jQuery(document).keydown(function(e) {
 
