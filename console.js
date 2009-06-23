@@ -60,8 +60,8 @@ var consoleController = {
 		// watch input field
 		jQuery(document).keypress(function() { self.inputSize(); });
 
-		// license
-		self.print("WordPress Console v0.1.0 by Jerod Santo &lt;http://jerodsanto.net&gt;");
+		// about
+		self.about();
     
     self.doInit();
 	},
@@ -114,15 +114,13 @@ var consoleController = {
 			
 			// otherwise, handle accordingly
       switch(input) {
-        case "clear":
-          // do stuff
+        case "clear": case "cls":
+          jQuery('#shell #header').siblings().empty();
           break;
-        case "help":
+        case "help": case "?":
           self.print("this is the help text");
-          // do stuff
           break;
         default:
-          // send ajax request
           jQuery.ajax({
             url:      self.url + 'query.php',
             type:     'POST',
@@ -141,17 +139,18 @@ var consoleController = {
           });
         } // end case
           
-        // get value of query
-        val = self.shell.find('input').val();
-        // replace input with query
-        self.shell.find('input').parent().empty().append(val);
-
         // save query
-        self.queries[self.counter] = val;
+        self.queries[self.counter] = input;
         self.doPrompt();
-        
 		});
 
+	},
+	
+	about : function() {
+	  var str = '<div id="header">' + 
+	            'WordPress Console [0.1.0] by <a target="_blank" href="http://jerodsanto.net">Jerod Santo</a>' +
+	            '</div>';
+	  this.shell.append(str);
 	},
 
 	print : function(string) {

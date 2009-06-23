@@ -7,33 +7,31 @@
   overflow: auto;
   cursor: text;
   height: 400px;
+  background-color: #000000;
+  color: #FFFFFF;
+}
+#wrapper #shell #header a{
+  text-decoration:none;
 }
 #wrapper #shell .row,
 #wrapper #shell .row form {
   display: inline;
-  margin-left: 5px;
   line-height: 20px;
 }
 #wrapper #shell .row form input {
   border: none;
 }
 #wrapper #shell .result {
+  font-size: 10pt;
   line-height: 20px;
+  margin-left: 10px;
 }
 #wrapper #shell .result pre {
-  margin: 0;
+  margin: 0 10px 0 0;
 }
 /**
 * colors
 */
-#wrapper #header {
-  background-color: #DAFFBD;
-  color: #668040;
-}
-#wrapper #shell {
-  background-color: #000000;
-  color: #FFFFFF;
-}
 #wrapper #shell .prompt {
   color: #fafbb9;
 }
@@ -65,9 +63,6 @@
 }
 #wrapper #shell input {
   font-family: monaco, 'lucida console', 'courier new', 'courier', monospace;
-  font-size: 10pt;
-}
-#wrapper #shell .result {
   font-size: 10pt;
 }
 #wrapper #shell .result pre {
