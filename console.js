@@ -60,11 +60,19 @@ var consoleController = {
 			
 		});
 
-		self.about();
+    // reload the session stuff before getting started
+		jQuery.ajax({
+      url:      self.url + 'reload.php',
+      type:     'POST',
+      dataType: 'json',
+      data:     { reload: true }
+    });
+    
+    self.about();
     self.doPrompt();
 	},
 	
-	doPrompt: function() {
+	doPrompt: function(prompt) {
 
 		var self = this;
 
@@ -72,9 +80,10 @@ var consoleController = {
 		self.counter++;
 		// reset historyCounter
 		self.historyCounter = self.counter;
-		
-		// prompt text
-		prompt = '>>';
+
+    // default prompt to >> unless passed in as argument
+		prompt = typeof(prompt) != "undefined" ? prompt : ">>";
+    
 		// append prompt to shell
 		self.shell.append('<div class="row" id="' + self.counter + '"><span class="prompt">' + prompt + '</span><form><input class="current" type="text" /></form></div>');
 		// focus input
@@ -91,9 +100,6 @@ var consoleController = {
 			// do not use normal http post
 			e.preventDefault();
 			
-			// if input field is empty, don't do anything
-			if (val == '') return false;
-			
 			// otherwise, save in history and handle accordingly
       input.removeClass("current");
 			self.queries[self.counter] = val;
@@ -103,8 +109,23 @@ var consoleController = {
           self.doPrompt()
           break;
         case "help": case "?":
-          self.print("this is the help text");
+          self.print("Special Commands:\n\n" + 
+                      "clear  (c) = clears the console output\n" +
+                      "help   (h) = prints this help text\n" +
+                      "reload (r) = flushes all variables and partial statements");
           self.doPrompt()
+          break;
+        case "reload": case "r":
+          jQuery.ajax({
+            url:      self.url + 'reload.php',
+            type:     'POST',
+            dataType: 'json',
+            data:     { reload: true },
+            success:  function(j) {
+              self.print(j.output);
+              self.doPrompt();
+            }
+          });
           break;
         default:
           jQuery.ajax({
@@ -120,9 +141,22 @@ var consoleController = {
                   self.print("=> " + j.rval);
                 }
                 if (typeof j.output != "undefined") {
-                  self.print(j.output);
+                  if (j.output == "partial") {
+                    var p = "..";
+                    self.print('');
+                  } else {
+                    self.print(j.output);
+                  }
                 }
               }
+              if (typeof p != "undefined") {
+                self.doPrompt(p);
+              } else {
+                self.doPrompt();
+              }
+            },
+            error:  function() {
+              self.error("Something went wrong. Did you forget the semicolon? Try the 'reload' command");
               self.doPrompt();
             }
           });
@@ -141,12 +175,16 @@ var consoleController = {
 	print: function(string) {
 		this.shell.append('<div class="result"><pre>' + string + '</pre></div>');
 	},
+	
+	error: function(string) {
+	  this.shell.append('<div class="err">Error: ' + string + '</div>');
+	},
 
 	check: function(json) {
 
 		// make sure json result is not an error
 		if (typeof json.error != "undefined") {
-			this.shell.append('<div class="err">Error: ' + json.error + '</div>');
+			this.error(json.error);
 			return false;
 		} else {
 			return true;

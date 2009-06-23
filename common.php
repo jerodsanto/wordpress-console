@@ -16,6 +16,10 @@ if (!function_exists('json_encode')) {
 	}
 }
 
+function fatal_error_handler($error) {
+  error($error);
+}
+
 function error($error) {
 	exit(json_encode(array('error' => $error)));
 }
@@ -595,12 +599,10 @@ function parse($code) {
         $eval = "return ".$eval;
     }
 
-    /* add a traling ; if necessary */ 
-    if ($need_semicolon) $eval .= ';';
-    
-    if (!$need_more) {
-      // logit($eval);
-        $_SESSION['code'] = $eval;
+    if ($need_more) {
+      $_SESSION['partial'] = $eval;
+    } else {
+      $_SESSION['code'] = $eval;
     }
             
     return $need_more;
