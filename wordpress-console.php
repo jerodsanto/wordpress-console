@@ -9,17 +9,17 @@ Version: 0.1.0
 */
 
 // THE CSS AND THE JAVASCRIPTS
-function console_add_headers() {
-  $css_url = WP_PLUGIN_URL . '/wordpress-console/console.css';
-  $js_url  = WP_PLUGIN_URL . '/wordpress-console/console.js';
-  echo '<link rel="stylesheet" type="text/css" href="' . $css_url . '" />';
-  echo '<script type="text/javascript" src="' . $js_url .'" ></script>';
+function console_admin_css() {
+  wp_enqueue_style('console',WP_PLUGIN_URL . "/wordpress-console/console.css");
+}
+
+function console_admin_javascripts() {
+  wp_enqueue_script('console', WP_PLUGIN_URL . '/wordpress-console/console.js', array('jquery'));
 }
 
 // THE CONSOLE
 function console_admin_page() {
   $page_url = str_replace( '%7E', '~', $_SERVER['REQUEST_URI']);
-  // session_start();
   
   echo '<div id="wrap">';
   echo '<h2>WordPress Console: "?" for help menu</h2>';
@@ -29,11 +29,11 @@ function console_admin_page() {
 }
 
 // THE HOOK-UP
-add_action('admin_menu', 'console_add_page');
-add_action('admin_head', 'console_add_headers');
-
-function console_add_page() {
-  add_management_page('Console', 'Console', 10, __FILE__, 'console_admin_page');
+function console_hooks() {
+  $page = add_management_page('Console', 'Console', 10, __FILE__, 'console_admin_page');
+  add_action("admin_print_scripts-$page",'console_admin_javascripts');
+  add_action("admin_print_styles-$page", 'console_admin_css');
 }
 
+add_action('admin_menu', 'console_hooks');
 ?>
