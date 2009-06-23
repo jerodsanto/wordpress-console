@@ -35,4 +35,5 @@ add_action('admin_head', 'console_add_headers');
 function console_add_page() {
   add_management_page('Console', 'Console', 10, __FILE__, 'console_admin_page');
 }
+
 ?>
