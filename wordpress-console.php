@@ -8,8 +8,6 @@ Author URI: http://jerodsanto.net
 Version: 0.1.0
 */
 
-// require('common.php');
-
 // THE CSS AND THE JAVASCRIPTS
 function console_add_headers() {
   $css_url = WP_PLUGIN_URL . '/wordpress-console/console.css';
