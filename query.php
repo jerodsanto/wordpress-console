@@ -1,11 +1,6 @@
 <?php
 require('common.php');
 
-@ob_end_clean();
-error_reporting(E_ALL);
-set_time_limit(0);
-
-
 if (isset($_POST['query'])) {
   $query = stripslashes($_POST['query']);
 
