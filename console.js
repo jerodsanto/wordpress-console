@@ -123,7 +123,7 @@ var consoleController = {
             url:      self.url + 'query.php',
             type:     'POST',
             dataType: 'json',
-            data:     { query: val},
+            data:     { query: val, signature: hex_hmac_sha1( jQuery("#wpconsolesecret").val(), val ) },
             success:  function(j) {
               // if result is not an error
               if (self.check(j)) {

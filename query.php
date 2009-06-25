@@ -3,7 +3,18 @@ require('common.php');
 
 set_error_handler('console_error_handler');
 
+$secret = get_option('wordpress-console-secret');
+if ( !$secret )
+	return;
+
+if ( !isset($_POST['signature']) || !$_POST['signature'] )
+	return;
+
 if (isset($_POST['query'])) {
+	
+  if ( hash_hmac('sha1', stripslashes($_POST['query']), $secret) != $_POST['signature'] )
+    return;
+
   $existing_vars = get_defined_vars();
 
   // restore session variables if they exist

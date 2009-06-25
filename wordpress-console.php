@@ -15,12 +15,18 @@ function console_admin_css() {
 
 function console_admin_javascripts() {
   wp_enqueue_script('console', WP_PLUGIN_URL . '/wordpress-console/console.js', array('jquery'));
+  wp_enqueue_script('sha1', WP_PLUGIN_URL . '/wordpress-console/sha1.js', array('jquery'));
 }
 
 // THE CONSOLE
 function console_admin_page() {
+  $secret = get_option('wordpress-console-secret');
+  if ( !$secret ) {
+	  $secret = md5( time() . php_uname("n") . $_SERVER['REMOTE_ADDR'] . $_SERVER['HTTP_HOST'] . __FILE__ );
+	  update_option('wordpress-console-secret', $secret);
+  }
   $page_url = str_replace( '%7E', '~', $_SERVER['REQUEST_URI']);
-  
+  echo '<input type="hidden" id="wpconsolesecret" value="'.$secret.'"';
   echo '<div id="wrap">';
   echo '<h2>WordPress Console: "?" for help menu</h2>';
   echo '<div id="wrapper">';
