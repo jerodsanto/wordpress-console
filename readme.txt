@@ -12,7 +12,11 @@ An interactive console for WordPress developers
 
 One killer feature of [Ruby on Rails](http://rubyonrails.org/) is the Rails Console.  It allows developers to examine and modify their code and data interactively from within the Rails environment. This plugin's aim is to provide a similar environment for WordPress plugin developers.
 
-Once activated, the plugin adds a "Console" page to the administrator's "Tools" menu. This page includes a JavaScript-based interactive shell which loads the WordPress environment. It allows execution of arbitrary PHP code as well as anything defined by WordPress or activated plugins. This is awesome.
+Once activated, the plugin adds a "Console" page to the administrator's "Tools" menu. This page includes a JavaScript-based interactive shell which loads the WordPress environment. It allows execution of arbitrary PHP code as well as anything defined by WordPress or activated plugins. This is awesome. Still not convinced? [Watch a screencast!](http://vimeo.com/5300607)
+
+= New In This Version =
+
+1.  Increased Security! Requires shared secret to run PHP commands.
 
 **SECURITY NOTICE**
 
@@ -47,6 +51,9 @@ You should fork the project on [GitHub](http://github.com/sant0sk1/wordpress-con
 1.  The console
 
 == Changelog ==
+
+= 0.1.1 =
+* Require shared secret
 
 = 0.1.0 =
 * Initial release
