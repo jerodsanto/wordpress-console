@@ -5,7 +5,7 @@ Plugin URI: http://github.com/sant0sk1/wordpress-console
 Description: An interactive console for WordPress developers
 Author: Jerod Santo
 Author URI: http://jerodsanto.net
-Version: 0.1.0
+Version: 0.1.1
 */
 
 // THE CSS AND THE JAVASCRIPTS
