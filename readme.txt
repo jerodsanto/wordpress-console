@@ -10,9 +10,7 @@ An interactive console for WordPress developers
 
 == Description ==
 
-One killer feature of [Ruby on Rails](http://rubyonrails.org/) is the Rails Console.  It allows developers to examine and modify their code and data interactively from within the Rails environment. This plugin's aim is to provide a similar environment for WordPress plugin developers.
-
-Once activated, the plugin adds a "Console" page to the administrator's "Tools" menu. This page includes a JavaScript-based interactive shell which loads the WordPress environment. It allows execution of arbitrary PHP code as well as anything defined by WordPress or activated plugins. This is awesome. Still not convinced? [Watch a screencast!](http://vimeo.com/5300607)
+This plugin adds a "Console" page to the administrator's Tools menu which provides a JavaScript-based interactive console that loads the WordPress environment. It allows execution of arbitrary PHP code as well as anything defined by WordPress or activated plugins. This is awesome for plugin developers and people learning PHP and/or the WordPress API. Still not convinced? [Watch a screencast!](http://vimeo.com/5300607)
 
 = New In This Version =
 
@@ -32,7 +30,7 @@ This plugin is for *development*. Do NOT run this plugin on your production serv
 
 = Who is this plugin for? =
 
-The WordPress Console was designed to help plugin *developers* be more productive. It will do no good for the average joe user.
+The WordPress Console was designed to help plugin *developers* be more productive. It will do no good for the average joe user. It can also be used as a learning tool, because it provides an environment where people can play with PHP and WordPress.
 
 = Does this plugin rock? =
 
@@ -44,11 +42,11 @@ Coming to a version near you.
 
 = I want feature [X] =
 
-You should fork the project on [GitHub](http://github.com/sant0sk1/wordpress-console) and help add it!
+You should fork the project on [GitHub](http://github.com/sant0sk1/wordpress-console) and help add it! Or contact me via [Twitter](http://twitter.com/sant0sk1) or my [blog](http://blog.jerodsanto.net) and let me know what features you think I should add.
 
 == Screenshots ==
 
-1.  The console
+1.  The WordPress Console
 
 == Changelog ==
 
