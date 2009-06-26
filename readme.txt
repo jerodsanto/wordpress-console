@@ -2,7 +2,7 @@
 Contributors: sant0sk1
 Donate link: http://jerodsanto.net
 Tags: admin, development, ajax, interactive
-Requires at least: 2.7
+Requires at least: 2.8
 Tested up to: 2.8
 Stable tag: trunk
 
@@ -14,7 +14,7 @@ This plugin adds a "Console" page to the administrator's Tools menu which provid
 
 = New In This Version =
 
-1.  Increased Security! Requires shared secret to run PHP commands.
+1.  Bug Fix: WP installs not in root directory should get to play too.
 
 **SECURITY NOTICE**
 
@@ -49,6 +49,9 @@ You should fork the project on [GitHub](http://github.com/sant0sk1/wordpress-con
 1.  The WordPress Console
 
 == Changelog ==
+
+= 0.1.2 =
+* Bug Fix: WP installs not in root directory should get to play too.
 
 = 0.1.1 =
 * Require shared secret

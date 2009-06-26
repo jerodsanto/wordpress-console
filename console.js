@@ -8,7 +8,7 @@ var consoleController = {
 
 		var self = this;
 		
-		self.url = '/wp-content/plugins/wordpress-console/';
+		self.url = document.location.href.replace(/wp-admin\/.*$/,"wp-content/plugins/wordpress-console/");
 
 		// create shell div
 		jQuery('#wrapper').append('<div id="shell"></div>');
@@ -158,7 +158,7 @@ var consoleController = {
 	
 	about: function() {
 	  var str = '<div id="header">' + 
-	            'WordPress Console [0.1.1] by <a target="_blank" href="http://jerodsanto.net">Jerod Santo</a>' +
+	            'WordPress Console [0.1.2] by <a target="_blank" href="http://jerodsanto.net">Jerod Santo</a>' +
 	            '</div>';
 	  this.shell.append(str);
 	},
