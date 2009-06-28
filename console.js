@@ -8,7 +8,8 @@ var consoleController = {
 
 		var self = this;
 		
-    self.url = jQuery('#wpconsoleurl').val();
+    self.url    = jQuery('#wpconsoleurl').val();
+    self.secret = jQuery("#wpconsolesecret").val()
 
 		// create shell div
 		jQuery('#wrapper').append('<div id="shell"></div>');
@@ -54,25 +55,22 @@ var consoleController = {
     				  url:      self.url + 'complete.php',
     				  type:     'POST',
     				  dataType: 'json',
-    				  data:     { partial: lastval, signature: hex_hmac_sha1( jQuery("#wpconsolesecret").val(), lastval ) },
+    				  data:     { partial: lastval, signature: hex_hmac_sha1( self.secret, lastval ) },
     				  success:  function(j) {
       					if (self.check(j)) {
-      					  if (typeof j != "undefined") {
-      					    self.test = j;
-      					    // if returned array only has one element, use it to fill current input
-      					    if (j.length == 1) {
-      					      input.val(j).focus();
-      					    } else {
-      					      // print 3-column listing of array values
-      					      buffer_to_longest(j);
-      					      while (j.length > 0) {
-      					        var line = j.splice(0,3);
-      					        self.print(line.join(" "));
-      					      }
-                      self.doPrompt();
-                      self.shell.find('input.current:last').val(lastval);
-      					    }
-      					  }
+    					    // if returned array only has one element, use it to fill current input
+    					    if (j.length == 1) {
+    					      input.val(j).focus();
+    					    } else {
+    					      // print 3-column listing of array values
+    					      buffer_to_longest(j);
+    					      while (j.length > 0) {
+    					        var line = j.splice(0,3);
+    					        self.print(line.join(" "));
+    					      }
+                    self.doPrompt();
+                    self.shell.find('input.current:last').val(lastval);
+    					    }
       					}
     				  },
     				  error:  function() {
@@ -158,7 +156,7 @@ var consoleController = {
             url:      self.url + 'query.php',
             type:     'POST',
             dataType: 'json',
-            data:     { query: val, signature: hex_hmac_sha1( jQuery("#wpconsolesecret").val(), val ) },
+            data:     { query: val, signature: hex_hmac_sha1( self.secret, val ) },
             success:  function(j) {
               // if result is not an error
               if (self.check(j)) {
