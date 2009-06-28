@@ -8,7 +8,7 @@ var consoleController = {
 
 		var self = this;
 		
-		self.url = document.location.href.replace(/wp-admin\/.*$/,"wp-content/plugins/wordpress-console/");
+    self.url = jQuery('#wpconsoleurl').val();
 
 		// create shell div
 		jQuery('#wrapper').append('<div id="shell"></div>');

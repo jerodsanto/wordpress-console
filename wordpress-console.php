@@ -30,9 +30,10 @@ function console_admin_page() {
 	  update_option('wordpress-console-tabcomplete', 0);
 	  $complete = 0;
   }
-  $page_url = str_replace( '%7E', '~', $_SERVER['REQUEST_URI']);
-  echo '<input type="hidden" id="wpconsolesecret" value="'.$secret.'"';
-  echo '<input type="hidden" id="wpconsoletabcomplete" value="'.$complete.'"';
+  
+  echo '<input type="hidden" id="wpconsoleurl" value="'.WP_PLUGIN_URL.'/wordpress-console/" />';
+  echo '<input type="hidden" id="wpconsolesecret" value="'.$secret.'" />';
+  echo '<input type="hidden" id="wpconsoletabcomplete" value="'.$complete.'" />';
   echo '<div id="wrap">';
   echo '<h2>WordPress Console: "?" for help menu</h2>';
   echo '<div id="wrapper">';
