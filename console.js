@@ -44,8 +44,38 @@ var consoleController = {
           }
 					break;
         case 9: // tab
-          alert("tab-completion (hopefully) coming soon!");
-          return false;
+			if ( 0 == jQuery('#wpconsoletabcomplete').val() ) {
+			  alert("tab-completion (hopefully) coming soon!");
+			  return false;
+			} else {
+                var lastval=self.shell.find('input.current:last').val();
+				jQuery.ajax({
+				  url:      self.url + 'complete.php',
+				  type:     'POST',
+				  dataType: 'json',
+				  data:     { partial: lastval, signature: hex_hmac_sha1( jQuery("#wpconsolesecret").val(), lastval ) },
+				  success:  function(j) {
+					// if result is not an error
+					if (self.check(j)) {
+					  // print output and return value if they exist
+					  if (typeof j.rval != "undefined") {
+						self.print("=> " + j.rval);
+					  }
+					  if (typeof j != "undefined") {
+                        for ( var i in j )
+						  self.print(j[i]);
+						self.doPrompt();
+					  }
+					}
+					//self.doPrompt();
+					self.shell.find('input.current:last').val(lastval);
+				  },
+				  error:  function() {
+					self.error("Most likely syntax. Forget the semicolon? If not, try 'reload' and re-execute");
+					self.doPrompt();
+				  }
+				});
+			}
           break;
 			}
 			

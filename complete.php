@@ -2,14 +2,22 @@
 require('common.php');
 
 if (isset($_POST['partial'])) {
+  $secret = get_option('wordpress-console-secret');
+  if ( !$secret )
+    return;
+  if ( !isset($_POST['signature']) || !$_POST['signature'] )
+    return;
   $partial = stripslashes($_POST['partial']);
-  $candidates = complete($partial);
-  print json_encode($candidates);
+  if ( hash_hmac('sha1', $partial, $secret) != $_POST['signature'] )
+    return;
+  if ( !eregi('([0-9a-z_-]+)$', $partial, $m) )
+	  die(json_encode( false ));
+  
+  $candidates = preg_grep("/{$m[1]}/i", complete($m[1]));
+  die(json_encode((array)$candidates));
 } else {
   error('Error initializing session.');
 }
-
-
 
 // returns array of possible matches
 function complete($string) {
