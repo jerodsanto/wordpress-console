@@ -13,7 +13,8 @@ if (isset($_POST['partial'])) {
   if ( !eregi('([0-9a-z_-]+)$', $partial, $m) )
 	  die(json_encode( false ));
   
-  $candidates = preg_grep("/{$m[1]}/i", complete($m[1]));
+  $candidates = preg_grep("/^{$m[1]}/", complete($m[1]));
+  sort($candidates);
   die(json_encode((array)$candidates));
 } else {
   error('Error initializing session.');
