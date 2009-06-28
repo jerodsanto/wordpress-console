@@ -23,14 +23,15 @@ var consoleController = {
 		jQuery(document).keydown(function(e) {
 
 			// get key code
-			var key = e.charCode ? e.charCode : e.keyCode ? e.keyCode : 0;
+			var key   = e.charCode ? e.charCode : e.keyCode ? e.keyCode : 0;
+			// get current input
+			var input = self.shell.find('input.current:last');
 
 			switch (key) {
 				case 38: // up
 					lastQuery = self.queries[self.historyCounter-1];
 					if (typeof lastQuery != "undefined") {
 						self.historyCounter--;
-						var input = self.shell.find('input.current');
 						input.val(lastQuery);
 					}
 					break;
@@ -38,40 +39,48 @@ var consoleController = {
 					nextQuery = self.queries[self.historyCounter+1];
           self.historyCounter++;
 					if (typeof nextQuery != "undefined") {
-						self.shell.find('input.current').val(nextQuery);
+						input.val(nextQuery);
 					}  else {
-            self.shell.find('input.current').val("");
+            input.val("");
           }
 					break;
         case 9: // tab
-			if ( 0 == jQuery('#wpconsoletabcomplete').val() ) {
-			  alert("tab-completion (hopefully) coming soon!");
-			  return false;
-			} else {
-                var lastval=self.shell.find('input.current:last').val();
-				jQuery.ajax({
-				  url:      self.url + 'complete.php',
-				  type:     'POST',
-				  dataType: 'json',
-				  data:     { partial: lastval, signature: hex_hmac_sha1( jQuery("#wpconsolesecret").val(), lastval ) },
-				  success:  function(j) {
-  					if (self.check(j)) {
-  					  if (typeof j != "undefined") {
-  					    // TODO - if returned array only has one element, use it to fill current input
-                for ( var i in j ) {
-                  self.print(j[i]);
-                }
-  						self.doPrompt();
-  					  }
-  					}
-  					self.shell.find('input.current:last').val(lastval);
-				  },
-				  error:  function() {
-					  self.error("Most likely syntax. Forget the semicolon? If not, try 'reload' and re-execute");
-					  self.doPrompt();
-				  }
-				});
-			}
+			    if ( 0 == jQuery('#wpconsoletabcomplete').val() ) {
+    			  alert("tab-completion (hopefully) coming soon!");
+    			  return false;
+    			} else {
+            var lastval = input.val();
+    				jQuery.ajax({
+    				  url:      self.url + 'complete.php',
+    				  type:     'POST',
+    				  dataType: 'json',
+    				  data:     { partial: lastval, signature: hex_hmac_sha1( jQuery("#wpconsolesecret").val(), lastval ) },
+    				  success:  function(j) {
+      					if (self.check(j)) {
+      					  if (typeof j != "undefined") {
+      					    self.test = j;
+      					    // if returned array only has one element, use it to fill current input
+      					    if (j.length == 1) {
+      					      input.val(j).focus();
+      					    } else {
+      					      // print 3-column listing of array values
+      					      buffer_to_longest(j);
+      					      while (j.length > 0) {
+      					        var line = j.splice(0,3);
+      					        self.print(line.join(" "));
+      					      }
+                      self.doPrompt();
+                      self.shell.find('input.current:last').val(lastval);
+      					    }
+      					  }
+      					}
+    				  },
+    				  error:  function() {
+    					  self.error("Most likely syntax. Forget the semicolon? If not, try 'reload' and re-execute");
+    					  self.doPrompt();
+    				  }
+    				});
+    			}
           break;
 			}
 			
@@ -210,3 +219,25 @@ var consoleController = {
 	
 }
 jQuery(document).ready(function() { consoleController.init(); });
+
+// HELPER FUNCTIONS
+function buffer_to_longest(array) {
+ var longest = array[0].length;
+  for (var i=1; i < array.length; i++) {
+    if (array[i].length > longest)
+      longest = array[i].length;
+  };
+  
+  for (var i=0; i < array.length; i++) {
+    array[i] = pad(array[i],longest);
+  };
+  
+  return array;
+}
+
+function pad(string,length) {
+  while (string.length < length) {
+    string = string + " ";
+  }
+  return string;
+}
