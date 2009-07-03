@@ -125,7 +125,9 @@ var consoleController = {
           self.doPrompt()
           break;
         case "help": case "?":
-          self.print("Special Commands:\n" + 
+          self.print("\nWhat's New:\n" +
+                      "  Tab-completion. Start a command and hit tab to see your options!\n" +
+                      "\nSpecial Commands:\n" + 
                       "  clear  (c) = clears the console output\n" +
                       "  help   (?) = prints this help text\n" +
                       "  reload (r) = flushes all variables and partial statements");
@@ -183,7 +185,7 @@ var consoleController = {
 	
 	about: function() {
 	  var str = '<div id="header">' + 
-	            'WordPress Console [0.1.2] by <a target="_blank" href="http://jerodsanto.net">Jerod Santo</a>' +
+	            'WordPress Console [0.2.0] by <a target="_blank" href="http://jerodsanto.net">Jerod Santo</a>' +
 	            '</div>';
 	  this.shell.append(str);
 	},
