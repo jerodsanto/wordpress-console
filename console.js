@@ -46,44 +46,34 @@ var consoleController = {
           }
 					break;
         case 9: // tab
-			    if ( 0 == jQuery('#wpconsoletabcomplete').val() ) {
-    			  alert("tab-completion (hopefully) coming soon!");
-    			  return false;
-    			} else {
-            var lastval = input.val();
-            e.preventDefault(); // don't do browser default action
-            
-    				jQuery.ajax({
-    				  url:      self.url + 'complete.php',
-    				  type:     'POST',
-    				  dataType: 'json',
-    				  data:     { partial: lastval, signature: hex_hmac_sha1( self.secret, lastval ) },
-    				  success:  function(j) {
-      					if (self.check(j)) {
-    					    // if returned array only has one element, use it to fill current input
-    					    if (j.length == 1) {
-    					      input.val(j).focus();
-    					    } else {
-    					      // print 3-column listing of array values
-    					      buffer_to_longest(j);
-    					      while (j.length > 0) {
-    					        var line = j.splice(0,3);
-    					        self.print(line.join(" "));
-    					      }
-                    self.doPrompt();
-                    self.shell.find('input.current:last').val(lastval);
-    					    }
-      					}
-    				  },
-    				  error:  function() {
-    					  self.error("Most likely syntax. Forget the semicolon? If not, try 'reload' and re-execute");
-    					  self.doPrompt();
-    				  }
-    				});
-    			}
+          var lastval = input.val();
+          e.preventDefault(); // don't do browser default action
+          
+  				jQuery.ajax({
+  				  url:      self.url + 'complete.php',
+  				  type:     'POST',
+  				  dataType: 'json',
+  				  data:     { partial: lastval, signature: hex_hmac_sha1( self.secret, lastval ) },
+  				  success:  function(j) {
+    					if (self.check(j)) {
+  					    // if returned array only has one element, use it to fill current input
+  					    if (j.length == 1) {
+  					      input.val(j).focus();
+  					    } else {
+  					      // print 3-column listing of array values
+  					      buffer_to_longest(j);
+  					      while (j.length > 0) {
+  					        var line = j.splice(0,3);
+  					        self.print(line.join(" "));
+  					      }
+                  self.doPrompt();
+                  self.shell.find('input.current:last').val(lastval);
+  					    }
+    					}
+  				  }
+  				});
           break;
-			}
-			
+			} // switch
 		});
 
     // reload the session stuff before getting started
