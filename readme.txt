@@ -1,7 +1,7 @@
 === WordPress Console ===
-Contributors: sant0sk1
+Contributors: sant0sk1, apokalyptik
 Donate link: http://jerodsanto.net
-Tags: admin, development, ajax, interactive
+Tags: admin, development, ajax, interactive, developer, shell, console
 Requires at least: 2.8
 Tested up to: 2.8
 Stable tag: trunk
@@ -14,7 +14,8 @@ This plugin adds a "Console" page to the administrator's Tools menu which provid
 
 = New In This Version =
 
-1.  Bug Fix: WP installs not in root directory should get to play too.
+1.  Tab-completion
+2.  Bug fixes
 
 **SECURITY NOTICE**
 
@@ -36,10 +37,6 @@ The WordPress Console was designed to help plugin *developers* be more productiv
 
 Yes, yes it does.
 
-= What about tab-completion? =
-
-Coming to a version near you.
-
 = I want feature [X] =
 
 You should fork the project on [GitHub](http://github.com/sant0sk1/wordpress-console) and help add it! Or contact me via [Twitter](http://twitter.com/sant0sk1) or my [blog](http://blog.jerodsanto.net) and let me know what features you think I should add.
@@ -49,6 +46,10 @@ You should fork the project on [GitHub](http://github.com/sant0sk1/wordpress-con
 1.  The WordPress Console
 
 == Changelog ==
+
+= 0.2.0 =
+* Tab-completion
+* Bug fixes
 
 = 0.1.2 =
 * Bug Fix: WP installs not in root directory should get to play too.
