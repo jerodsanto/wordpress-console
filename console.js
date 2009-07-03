@@ -55,24 +55,20 @@ var consoleController = {
 				  dataType: 'json',
 				  data:     { partial: lastval, signature: hex_hmac_sha1( jQuery("#wpconsolesecret").val(), lastval ) },
 				  success:  function(j) {
-					// if result is not an error
-					if (self.check(j)) {
-					  // print output and return value if they exist
-					  if (typeof j.rval != "undefined") {
-						self.print("=> " + j.rval);
-					  }
-					  if (typeof j != "undefined") {
-                        for ( var i in j )
-						  self.print(j[i]);
-						self.doPrompt();
-					  }
-					}
-					//self.doPrompt();
-					self.shell.find('input.current:last').val(lastval);
+  					if (self.check(j)) {
+  					  if (typeof j != "undefined") {
+  					    // TODO - if returned array only has one element, use it to fill current input
+                for ( var i in j ) {
+                  self.print(j[i]);
+                }
+  						self.doPrompt();
+  					  }
+  					}
+  					self.shell.find('input.current:last').val(lastval);
 				  },
 				  error:  function() {
-					self.error("Most likely syntax. Forget the semicolon? If not, try 'reload' and re-execute");
-					self.doPrompt();
+					  self.error("Most likely syntax. Forget the semicolon? If not, try 'reload' and re-execute");
+					  self.doPrompt();
 				  }
 				});
 			}
