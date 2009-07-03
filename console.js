@@ -51,6 +51,8 @@ var consoleController = {
     			  return false;
     			} else {
             var lastval = input.val();
+            e.preventDefault(); // don't do browser default action
+            
     				jQuery.ajax({
     				  url:      self.url + 'complete.php',
     				  type:     'POST',
