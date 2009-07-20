@@ -1,9 +1,9 @@
 === WordPress Console ===
-Contributors: sant0sk1, apokalyptik
+Contributors: sant0sk1
 Donate link: http://jerodsanto.net
 Tags: admin, development, ajax, interactive, developer, shell, console
 Requires at least: 2.8
-Tested up to: 2.8
+Tested up to: 2.8.2
 Stable tag: trunk
 
 An interactive console for WordPress developers
@@ -14,8 +14,9 @@ This plugin adds a "Console" page to the administrator's Tools menu which provid
 
 = New In This Version =
 
-1.  Tab-completion
-2.  Bug fixes
+1.  WordPress 2.8.1 Compatibility
+2.  Bug fix: move cursor to end of input on "up-arrow"
+3.  Bug fix: don't allow history buffer to go negative
 
 **SECURITY NOTICE**
 
@@ -47,6 +48,11 @@ You should fork the project on [GitHub](http://github.com/sant0sk1/wordpress-con
 
 == Changelog ==
 
+= 0.2.1 =
+* WordPress 2.8.1 Compatibility
+* Bug fix: move cursor to end of input on "up-arrow"
+* Bug fix: don't allow history buffer to go negative
+
 = 0.2.0 =
 * Tab-completion
 * Bug fixes
@@ -59,3 +65,7 @@ You should fork the project on [GitHub](http://github.com/sant0sk1/wordpress-con
 
 = 0.1.0 =
 * Initial release
+
+== Contributors ==
+* [apokalyptik](http://blog.apokalyptik.com/)
+* [Doug Neiner](http://pixelgraphics.us/)

@@ -204,7 +204,7 @@
 
 		about: function() {
 		  var str = '<div id="header">' + 
-		            'WordPress Console [0.2.0] by <a target="_blank" href="http://jerodsanto.net">Jerod Santo</a>' +
+		            'WordPress Console [0.2.1] by <a target="_blank" href="http://jerodsanto.net">Jerod Santo</a>' +
 		            '</div>';
 		  this.shell.append(str);
 		},
