@@ -45,6 +45,7 @@ You should fork the project on [GitHub](http://github.com/sant0sk1/wordpress-con
 == Screenshots ==
 
 1.  The WordPress Console
+2.  Tab Completion Example
 
 == Changelog ==
 
