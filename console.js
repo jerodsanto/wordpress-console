@@ -1,6 +1,6 @@
 (function($){
 	$.consoleController = {
-
+		version : '0.2.1',
 		counter : 0,
 		queries : [],
 		historyCounter : 0,
@@ -9,12 +9,11 @@
 
 			var self = this;
 
-	    self.url    = $('#wpconsoleurl').val();
-	    self.secret = $("#wpconsolesecret").val()
+		    self.url    = WP_CONSOLE_URL;
+		    self.secret = WP_CONSOLE_SECRET;
 
 			// create shell div
-			$('#wrapper').append('<div id="shell"></div>');
-			self.shell = $('#shell');
+			self.shell = $('<div id="shell"></div>').appendTo($('#wrapper'));
 
 			// listen for clicks on the shell
 			self.shell.click(function() {
@@ -113,40 +112,54 @@
 
 			// increment prompt counter
 			self.counter++;
+			
 			// reset historyCounter
 			self.historyCounter = self.counter;
 
-	    // default prompt to >> unless passed in as argument
+			// default prompt to >> unless passed in as argument
 			prompt = typeof(prompt) != "undefined" ? prompt : ">>";
 
 			// append prompt to shell
-			self.shell.append('<div class="row" id="' + self.counter + '"><span class="prompt">' + prompt + '</span><form><input class="current" type="text" /></form></div>');
+			
+			var $row      = $('<div class="row" id="' + self.counter + '"></div>' );
+			var $prompt   = $('<span class="prompt">' + prompt + '</span>');
+			var $form     = $("<form></form>");
+			var $input    = $("<input class='current' type='text' />");
+			
+			$form.append( $input );
+			
+			$row.append( $prompt ).append( $form );
+			
+			self.shell.append( $row );
 
 			// determine input width
 			var input_width = self.shell.width() - 50;
+			
 			// set width and focus input
-			self.shell.find('div#' + self.counter + ' input').width(input_width).focus();
+			$input.width( input_width ).focus();
 
 			// listen for submit
-			self.shell.find('div#' + self.counter + ' form').submit(function(e) {
-			  var input = self.shell.find('div#' + self.counter + ' input');
-			  var val = input.val();
+			$form.submit(function(e) {
+			  	var val = $input.val();
 
 				// do not use normal http post
 				e.preventDefault();
 
 				// save in history and handle accordingly
-	      input.removeClass("current");
+	      		$input.removeClass("current");
+	
 				self.queries[self.counter] = val;
+	
 	      switch(val) {
 	        case "clear": case "c":
-	          $('#shell #header').siblings().empty();
+	          self.$header.siblings().empty();
 	          self.doPrompt()
 	          break;
 	        case "help": case "?":
 	          self.print("\nWhat's New:\n" +
 	                      "  Tab-completion. Start a command and hit tab to see your options!\n" +
-	                      "\nSpecial Commands:\n" + 
+						  "\n" + 
+	                      "Special Commands:\n" + 
 	                      "  clear  (c) = clears the console output\n" +
 	                      "  help   (?) = prints this help text\n" +
 	                      "  reload (r) = flushes all variables and partial statements");
@@ -203,14 +216,17 @@
 		},
 
 		about: function() {
-		  var str = '<div id="header">' + 
-		            'WordPress Console [0.2.1] by <a target="_blank" href="http://jerodsanto.net">Jerod Santo</a>' +
-		            '</div>';
-		  this.shell.append(str);
+		  self.$header  = $('<div id="header">' + 
+		            		'WordPress Console [' + self.version + '] by ' + 
+							'<a target="_blank" href="http://jerodsanto.net">Jerod Santo</a>' +
+		            		'</div>');
+		  this.shell.append(self.$header);
 		},
 
 		print: function(string) {
-			this.shell.append('<div class="result"><pre>' + string + '</pre></div>');
+			// Using text() escapes HTML to output visible tags
+			var result = $('<pre></pre>').text(string);
+			this.shell.append( $('<div></div>').append(result) );
 		},
 
 		error: function(string) {
