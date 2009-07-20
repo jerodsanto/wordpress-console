@@ -1,14 +1,14 @@
 (function($){
-	$.consoleController = {
-		version : '0.2.1',
-		counter : 0,
-		queries : [],
-		historyCounter : 0,
+	$.consoleController = function(){
+		this.version = '0.2.1';
+		this.counter = 0;
+		this.queries = [];
+		this.historyCounter = 0;
+		
+		var self = this;
 
-		init: function() {
 
-			var self = this;
-
+		this.init = function() {
 		    self.url    = WP_CONSOLE_URL;
 		    self.secret = WP_CONSOLE_SECRET;
 
@@ -104,11 +104,9 @@
 
 	    self.about();
 	    self.doPrompt();
-		},
+		}
 
-		doPrompt: function(prompt) {
-
-			var self = this;
+		this.doPrompt = function(prompt) {
 
 			// increment prompt counter
 			self.counter++;
@@ -213,27 +211,27 @@
 	        } // end case
 			});
 
-		},
+		}
 
-		about: function() {
+		this.about = function() {
 		  self.$header  = $('<div id="header">' + 
 		            		'WordPress Console [' + self.version + '] by ' + 
 							'<a target="_blank" href="http://jerodsanto.net">Jerod Santo</a>' +
 		            		'</div>');
 		  this.shell.append(self.$header);
-		},
+		}
 
-		print: function(string) {
+		this.print = function(string) {
 			// Using text() escapes HTML to output visible tags
 			var result = $('<pre></pre>').text(string);
 			this.shell.append( $('<div></div>').append(result) );
-		},
+		}
 
-		error: function(string) {
+		this.error = function(string) {
 		  this.shell.append('<div class="err">Error: ' + string + '</div>');
-		},
+		}
 
-		check: function(json) {
+		this.check = function(json) {
 
 			// make sure json result is not an error
 			if (typeof json.error != "undefined") {
@@ -243,9 +241,12 @@
 				return true;
 			}
 		}
+		
+		// Trigger init
+		this.init();
 
 	}
-	$(document).ready(function() { $.consoleController.init(); });
+	$(document).ready(function() { window.consoleController = new $.consoleController(); });
 })(jQuery);
 
 // HELPER FUNCTIONS
