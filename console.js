@@ -7,7 +7,6 @@
 		
 		var self = this;
 
-
 		this.init = function() {
 		    self.url    = WP_CONSOLE_URL;
 		    self.secret = WP_CONSOLE_SECRET;
@@ -52,55 +51,45 @@
 			$(document).keydown(function(e) {
 			    // get key code
 				var key   = e.charCode ? e.charCode : e.keyCode ? e.keyCode : 0;
+				
 				// get current input
 				var input = self.shell.find('input.current:last');
 
 				switch (key) {
 					case 38:
-						e.preventDefault();
-						break;
 					case 40:
 						e.preventDefault();
 						break;
 					case 9: // tab
 						var lastval = input.val();
 						e.preventDefault(); // don't do browser default action
-
-		  				$.ajax({
-		  				  url:      self.url + 'complete.php',
-		  				  type:     'POST',
-		  				  dataType: 'json',
-		  				  data:     { partial: lastval, signature: hex_hmac_sha1( self.secret, lastval ) },
-		  				  success:  function(j) {
-		    					if (self.check(j)) {
-		  					    // if returned array only has one element, use it to fill current input
-		  					    if (j.length == 1) {
-		  					      input.val(j).focus();
-		  					    } else {
-		  					      // print 3-column listing of array values
-		  					      buffer_to_longest(j);
-		  					      while (j.length > 0) {
-		  					        var line = j.splice(0,3);
-		  					        self.print(line.join(" "));
-		  					      }
-		                  self.doPrompt();
-		                  self.shell.find('input.current:last').val(lastval);
-		  					    }
-		    					}
-		  				  }
-		  				});
+						
+						self.postJSON('complete', lastval, {
+							success:  function(j) {
+								if (self.check(j)) {
+									// if returned array only has one element, use it to fill current input
+									if (j.length == 1) {
+										input.val(j).focus();
+									} else {
+										// print 3-column listing of array values
+										buffer_to_longest(j);
+										while (j.length > 0) {
+											var line = j.splice(0,3);
+											self.print(line.join(" "));
+										}
+										self.doPrompt();
+										self.shell.find('input.current:last').val(lastval);
+										}
+									}
+								}	
+							});
 			          break;
 				}
 
 			});
 
 	    // reload the session stuff before getting started
-			$.ajax({
-	      url:      self.url + 'reload.php',
-	      type:     'POST',
-	      dataType: 'json',
-	      data:     { reload: true }
-	    });
+		self.reload();
 
 	    self.about();
 	    self.doPrompt();
@@ -115,17 +104,15 @@
 			self.historyCounter = self.counter;
 
 			// default prompt to >> unless passed in as argument
-			prompt = typeof(prompt) != "undefined" ? prompt : ">>";
+			prompt = (prompt) ? prompt : ">>";
 
 			// append prompt to shell
-			
 			var $row      = $('<div class="row" id="' + self.counter + '"></div>' );
 			var $prompt   = $('<span class="prompt">' + prompt + '</span>');
 			var $form     = $("<form></form>");
 			var $input    = $("<input class='current' type='text' />");
 			
-			$form.append( $input );
-			
+			$form.append( $input );			
 			$row.append( $prompt ).append( $form );
 			
 			self.shell.append( $row );
@@ -148,69 +135,101 @@
 	
 				self.queries[self.counter] = val;
 	
-	      switch(val) {
-	        case "clear": case "c":
-	          self.$header.siblings().empty();
-	          self.doPrompt()
-	          break;
-	        case "help": case "?":
-	          self.print("\nWhat's New:\n" +
-	                      "  Tab-completion. Start a command and hit tab to see your options!\n" +
-						  "\n" + 
-	                      "Special Commands:\n" + 
-	                      "  clear  (c) = clears the console output\n" +
-	                      "  help   (?) = prints this help text\n" +
-	                      "  reload (r) = flushes all variables and partial statements");
-	          self.doPrompt()
-	          break;
-	        case "reload": case "r":
-	          $.ajax({
-	            url:      self.url + 'reload.php',
-	            type:     'POST',
-	            dataType: 'json',
-	            data:     { reload: true },
-	            success:  function(j) {
-	              self.print(j.output);
-	              self.doPrompt();
-	            }
-	          });
-	          break;
-	        default:
-	          $.ajax({
-	            url:      self.url + 'query.php',
-	            type:     'POST',
-	            dataType: 'json',
-	            data:     { query: val, signature: hex_hmac_sha1( self.secret, val ) },
-	            success:  function(j) {
-	              // if result is not an error
-	              if (self.check(j)) {
-	                // print output and return value if they exist
-	                if (typeof j.rval != "undefined") {
-	                  self.print("=> " + j.rval);
-	                }
-	                if (typeof j.output != "undefined") {
-	                  if (j.output == "partial") {
-	                    var p = "..";
-	                    self.print('');
-	                  } else {
-	                    self.print(j.output);
-	                  }
-	                }
-	              }
-	              if (typeof p != "undefined") {
-	                self.doPrompt(p);
-	              } else {
-	                self.doPrompt();
-	              }
-	            },
-	            error:  function() {
-	              self.error("Most likely syntax. Forget the semicolon? If not, try 'reload' and re-execute");
-	              self.doPrompt();
-	            }
-	          });
-	        } // end case
-			});
+	      		switch(val) {
+			        case "clear": case "c":
+			          self.$header.siblings().empty();
+			          self.doPrompt()
+			          break;
+			        case "help": case "?":
+			          self.print("\nWhat's New:\n" +
+			                      "  Tab-completion. Start a command and hit tab to see your options!\n" +
+								  "\n" + 
+			                      "Special Commands:\n" + 
+			                      "  clear  (c) = clears the console output\n" +
+			                      "  help   (?) = prints this help text\n" +
+			                      "  reload (r) = flushes all variables and partial statements");
+			          self.doPrompt()
+			          break;
+			        case "reload": case "r":
+						self.reload(true);
+						break;
+			        default:
+			          	self.postJSON('query', val, {
+							success:  function(j) {
+				              // if result is not an error
+				              if (self.check(j)) {
+				                // print output and return value if they exist
+				                if (typeof j.rval != "undefined") {
+				                  self.print("=> " + j.rval);
+				                }
+				                if (typeof j.output != "undefined") {
+				                  if (j.output == "partial") {
+				                    var p = "..";
+				                    self.print('');
+				                  } else {
+				                    self.print(j.output);
+				                  }
+				                }
+				              }
+				              self.doPrompt((typeof p != "undefined") ? p : null);
+				            },
+				            error:  function() {
+				              self.error("Most likely syntax. Forget the semicolon? If not, try 'reload' and re-execute");
+				              self.doPrompt();
+				            }
+						});
+			        } // end case
+				});
 
+		}
+		
+		this.reload = function(show_message){
+			var callbacks = {};
+			if(show_message === true){
+				callbacks.success = function(j) {
+		            self.print(j.output);
+		            self.doPrompt();
+		        }
+			}
+			return this.postJSON('reload',callbacks);
+		}
+		
+		this.postJSON = function(page, value, callbacks, additional_data){
+			var request = {
+				type:     'POST',
+				dataType: 'json',
+				data: {}
+			};
+			var key = null;
+			
+			if(typeof(value) == "object") {
+				additional_data = callbacks;
+				callbacks = value;
+			} 
+			
+			if(callbacks)       request = $.extend(request, callbacks);
+			if(additional_data) request = $.extend(request, additional_data);
+			
+			switch(page){
+				case "query":
+					key = "query";
+					break;
+				case "complete":
+					key = "partial";
+					break;
+			}
+			
+			request.url = self.url + page + ".php";
+			
+			if(key) {
+				request.data[key] = value;
+				request.data.signature = hex_hmac_sha1( self.secret, value );
+			} else {
+				request.data.reload = true;
+			}
+			
+			return $.ajax(request);
+			
 		}
 
 		this.about = function() {
@@ -232,7 +251,6 @@
 		}
 
 		this.check = function(json) {
-
 			// make sure json result is not an error
 			if (typeof json.error != "undefined") {
 				this.error(json.error);

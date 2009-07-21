@@ -27,8 +27,8 @@ function console_admin_page() {
   }
   ?>
   	<script type="text/javascript" charset="utf-8">
-  		var WP_CONSOLE_URL    = <?php echo json_encode(WP_PLUGIN_URL . '/wordpress-console/') ?>;
-		var WP_CONSOLE_SECRET = <?php echo json_encode($secret) ?>;
+  		var WP_CONSOLE_URL    = <?php echo json_encode( WP_PLUGIN_URL . '/wordpress-console/' ) ?>;
+		var WP_CONSOLE_SECRET = <?php echo json_encode( $secret ) ?>;
   	</script>
 	<div id="wrap">
 		<h2>WordPress Console: "?" for help menu</h2>
