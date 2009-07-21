@@ -1,6 +1,5 @@
 (function($){
 	$.consoleController = function(){
-		this.version = '0.2.1';
 		this.counter = 0;
 		this.queries = [];
 		this.historyCounter = 0;
@@ -8,8 +7,9 @@
 		var self = this;
 
 		this.init = function() {
-		    self.url    = WP_CONSOLE_URL;
-		    self.secret = WP_CONSOLE_SECRET;
+			self.version = WP_CONSOLE_VERSION;
+		    self.url     = WP_CONSOLE_URL;
+		    self.secret  = WP_CONSOLE_SECRET;
 
 			// create shell div
 			self.shell = $('<div id="shell"></div>').appendTo($('#wrapper'));
