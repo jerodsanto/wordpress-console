@@ -25,14 +25,19 @@ function console_admin_page() {
 	  $secret = md5( time() . php_uname("n") . $_SERVER['REMOTE_ADDR'] . $_SERVER['HTTP_HOST'] . __FILE__ );
 	  update_option('wordpress-console-secret', $secret);
   }
-  
-  echo '<input type="hidden" id="wpconsoleurl" value="'.WP_PLUGIN_URL.'/wordpress-console/" />';
-  echo '<input type="hidden" id="wpconsolesecret" value="'.$secret.'" />';
-  echo '<div id="wrap">';
-  echo '<h2>WordPress Console: "?" for help menu</h2>';
-  echo '<div id="wrapper">';
-  echo '</div>';
-  echo '</div>';
+  ?>
+  	<script type="text/javascript" charset="utf-8">
+		var WP_CONSOLE_VERSION = <?php echo json_encode( '0.2.1' )  ?>
+  		var WP_CONSOLE_URL     = <?php echo json_encode( WP_PLUGIN_URL . '/wordpress-console/' ) ?>;
+		var WP_CONSOLE_SECRET  = <?php echo json_encode( $secret ) ?>;
+  	</script>
+	<div id="wrap">
+		<h2>WordPress Console: "?" for help menu</h2>
+		<div id="wrapper">
+			
+		</div>
+	</div>
+  <?php
 }
 
 // THE HOOK-UP
