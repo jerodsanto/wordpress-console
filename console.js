@@ -8,8 +8,8 @@
 
 		this.init = function() {
 			self.version = WP_CONSOLE_VERSION;
-		    self.url     = WP_CONSOLE_URL;
-		    self.secret  = WP_CONSOLE_SECRET;
+		  self.url     = WP_CONSOLE_URL;
+		  self.secret  = WP_CONSOLE_SECRET;
 
 			// create shell div
 			self.shell = $('<div id="shell"></div>').appendTo($('#wrapper'));
