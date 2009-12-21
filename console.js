@@ -243,7 +243,7 @@
 		this.print = function(string) {
 			// Using text() escapes HTML to output visible tags
 			var result = $('<pre></pre>').text(string);
-			this.shell.append( $('<div></div>').append(result) );
+			this.shell.append( $('<div class="result"></div>').append(result) );
 		}
 
 		this.error = function(string) {
