@@ -5,13 +5,13 @@ set_error_handler('console_error_handler');
 
 $secret = get_option('wordpress-console-secret');
 if ( !$secret )
-	return;
+  return;
 
 if ( !isset($_POST['signature']) || !$_POST['signature'] )
-	return;
+  return;
 
 if (isset($_POST['query'])) {
-	
+
   if ( hash_hmac('sha1', stripslashes($_POST['query']), $secret) != $_POST['signature'] )
     return;
 
@@ -23,7 +23,7 @@ if (isset($_POST['query'])) {
   }
 
   $query = stripslashes($_POST['query']);
-  
+
   // append query to current partial query if there is one
   if (isset($_SESSION['partial'])) {
     $query = $_SESSION['partial'] . $query;
@@ -33,21 +33,21 @@ if (isset($_POST['query'])) {
     if (parse($query) == 0) {
       $response = array();
 
-      // start output buffer (to capture prints)
-      ob_start();
+      ob_start(); // start output buffer (to capture prints)
       $rval = eval($_SESSION['code']);
-
-      // eval'd code had a return value
-      if ($rval != NULL) { 
-        $response['rval'] = $rval;
-      }
       $response['output'] = ob_get_contents();
+      ob_end_clean(); // quietly discard buffered output
 
-      // quietly discard buffered output
-      ob_end_clean();
+      if ($rval != NULL) {
+        ob_start(); // do it again, this time for the return value
+        print_r($rval);
+        $response['rval'] = ob_get_contents();
+        ob_end_clean();
+      }
+
       print json_encode($response);
       // clear the code buffer
-      $_SESSION['code'] = '';
+      $_SESSION['code']    = '';
       $_SESSION['partial'] = '';
     } else {
       print json_encode(array('output' => 'partial'));
