@@ -281,7 +281,7 @@ function buffer_to_longest(array) {
 
 function pad(string,length) {
   while (string.length < length) {
-    string = string + " ";
+    string += " ";
   }
   return string;
 }

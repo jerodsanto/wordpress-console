@@ -5,7 +5,7 @@ Plugin URI: http://github.com/sant0sk1/wordpress-console
 Description: An interactive console for WordPress developers
 Author: Jerod Santo
 Author URI: http://jerodsanto.net
-Version: 0.2.2
+Version: 0.2.3
 */
 
 // THE CSS AND THE JAVASCRIPTS
@@ -22,21 +22,20 @@ function console_admin_javascripts() {
 function console_admin_page() {
   $secret = get_option('wordpress-console-secret');
   if ( !$secret ) {
-	  $secret = md5( time() . php_uname("n") . $_SERVER['REMOTE_ADDR'] . $_SERVER['HTTP_HOST'] . __FILE__ );
-	  update_option('wordpress-console-secret', $secret);
+    $secret = md5( time() . php_uname("n") . $_SERVER['REMOTE_ADDR'] . $_SERVER['HTTP_HOST'] . __FILE__ );
+    update_option('wordpress-console-secret', $secret);
   }
   ?>
-  	<script type="text/javascript" charset="utf-8">
-		var WP_CONSOLE_VERSION = <?php echo json_encode( '0.2.2' )  ?>;
-  	var WP_CONSOLE_URL     = <?php echo json_encode( WP_PLUGIN_URL . '/wordpress-console/' ) ?>;
-		var WP_CONSOLE_SECRET  = <?php echo json_encode( $secret ) ?>;
-  	</script>
-	<div id="wrap">
-		<h2>WordPress Console: "?" for help menu</h2>
-		<div id="wrapper">
-
-		</div>
-	</div>
+  <script type="text/javascript" charset="utf-8">
+    var WP_CONSOLE_VERSION = <?php echo json_encode( '0.2.3' )  ?>;
+    var WP_CONSOLE_URL     = <?php echo json_encode( WP_PLUGIN_URL . '/wordpress-console/' ) ?>;
+    var WP_CONSOLE_SECRET  = <?php echo json_encode( $secret ) ?>;
+  </script>
+  <div id="wrap">
+    <h2>WordPress Console: "?" for help menu</h2>
+    <div id="wrapper">
+    </div>
+  </div>
   <?php
 }
 
