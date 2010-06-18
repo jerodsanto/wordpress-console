@@ -10,10 +10,10 @@ error_reporting(E_ALL);
 set_time_limit(0);
 
 if (!function_exists('json_encode')) {
-	function json_encode($value) {
-		@require_once('lib/FastJSON.class.php');
-		return FastJSON::encode($value);
-	}
+  function json_encode($value) {
+    @require_once('lib/FastJSON.class.php');
+    return FastJSON::encode($value);
+  }
 }
 
 function console_error_handler($errno,$errorstr) {
@@ -21,7 +21,7 @@ function console_error_handler($errno,$errorstr) {
 }
 
 function error($error) {
-	exit(json_encode(array('error' => $error)));
+  exit(json_encode(array('error' => $error)));
 }
 
 function logit($msg) {
@@ -37,15 +37,15 @@ function logit($msg) {
 function save_variables($existing, $current, $ignore) {
   $new_vars  = array_diff(array_keys($current),array_keys($existing));
   $user_vars = array_diff($new_vars,$ignore);
-  
+
   $save_vars = array();
-  
+
   foreach($current as $key => $value) {
     if (in_array($key,$user_vars)) {
       $save_vars[$key] = $value;
     }
   }
-  
+
   // purge any references to stdClass::__set_state() as advised here:
   // http://drupal.org/node/215375
   $export = var_export($save_vars,true);
@@ -62,7 +62,7 @@ function parse($code) {
 
     $t = token_get_all('<?php '.$code.' ?>');
     // logit($code);
-    
+
     $need_semicolon = 1; /* do we need a semicolon to complete the statement ? */
     $need_return = 1;    /* can we prepend a return to the eval-string ? */
     $open_comment = 0;   /* a open multi-line comment */
@@ -75,7 +75,7 @@ function parse($code) {
     foreach ($t as $ndx => $token) {
         if (is_array($token)) {
             $ignore = 0;
-  
+
             switch($token[0]) {
             case T_WHITESPACE:
             case T_OPEN_TAG:
@@ -89,7 +89,7 @@ function parse($code) {
 
             case T_IF:
             case T_RETURN:
-                
+
             case T_CLASS:
             case T_FUNCTION:
             case T_INTERFACE:
@@ -158,7 +158,7 @@ function parse($code) {
             case T_IS_IDENTICAL:
             case T_IS_GREATER_OR_EQUAL:
             case T_IS_SMALLER_OR_EQUAL:
-                
+
             case T_BOOLEAN_OR:
             case T_LOGICAL_OR:
             case T_BOOLEAN_AND:
@@ -187,7 +187,7 @@ function parse($code) {
             default:
                 /* debug unknown tags*/
                 error_log(sprintf("unknown tag: %d (%s): %s".PHP_EOL, $token[0], token_name($token[0]), $token[1]));
-                
+
                 break;
             }
             if (!$ignore) {
@@ -208,10 +208,10 @@ function parse($code) {
                     $ts[$last - 2]['token'] == T_OBJECT_OPERATOR &&
                     $ts[$last - 3]['token'] == ')' ) {
                     /* func()->method()
-                    * 
-                    * we can't know what func() is return, so we can't 
+                    *
+                    * we can't know what func() is return, so we can't
                     * say if the method() exists or not
-                    * 
+                    *
                     */
                 } else if ($last >= 3 &&
                     $ts[0]['token'] != T_CLASS && /* if we are not in a class definition */
@@ -235,7 +235,7 @@ function parse($code) {
                     if (!$in_catch) {
                         /* $object has to exist and has to be a object */
                         $objname = $ts[$last - 3]['value'];
-               
+
                         if (!isset($GLOBALS[ltrim($objname, '$')])) {
                             throw new Exception(sprintf('Variable \'%s\' is not set', $objname));
                         }
@@ -244,13 +244,13 @@ function parse($code) {
                         if (!is_object($object)) {
                             throw new Exception(sprintf('Variable \'%s\' is not a class', $objname));
                         }
-                        
+
                         $method = $ts[$last - 1]['value'];
 
                         /* obj */
-                    
+
                         if (!method_exists($object, $method)) {
-                            throw new Exception(sprintf("Variable %s (Class '%s') doesn't have a method named '%s'", 
+                            throw new Exception(sprintf("Variable %s (Class '%s') doesn't have a method named '%s'",
                                 $objname, get_class($object), $method));
                         }
                     }
@@ -264,7 +264,7 @@ function parse($code) {
 
                     /* $object has to exist and has to be a object */
                     $objname = $ts[$last - 3]['value'];
-                   
+
                     if (!isset($GLOBALS[ltrim($objname, '$')])) {
                         throw new Exception(sprintf('Variable \'%s\' is not set', $objname));
                     }
@@ -273,7 +273,7 @@ function parse($code) {
                     if (!is_object($object)) {
                         throw new Exception(sprintf('Variable \'%s\' is not a class', $objname));
                     }
-                    
+
                     $methodname = $ts[$last - 1]['value'];
 
                     if (!isset($GLOBALS[ltrim($methodname, '$')])) {
@@ -282,9 +282,9 @@ function parse($code) {
                     $method = $GLOBALS[ltrim($methodname, '$')];
 
                     /* obj */
-                    
+
                     if (!method_exists($object, $method)) {
-                        throw new Exception(sprintf("Variable %s (Class '%s') doesn't have a method named '%s'", 
+                        throw new Exception(sprintf("Variable %s (Class '%s') doesn't have a method named '%s'",
                             $objname, get_class($object), $method));
                     }
 
@@ -301,7 +301,7 @@ function parse($code) {
 
                     /* $object has to exist and has to be a object */
                     $objname = $ts[$last - 6]['value'];
-                   
+
                     if (!isset($GLOBALS[ltrim($objname, '$')])) {
                         throw new Exception(sprintf('Variable \'%s\' is not set', $objname));
                     }
@@ -322,13 +322,13 @@ function parse($code) {
                     if (!is_object($object)) {
                         throw new Exception(sprintf('Variable \'%s\' is not a class', $objname));
                     }
-                    
+
                     $method = $ts[$last - 1]['value'];
 
                     /* obj */
-                    
+
                     if (!method_exists($object, $method)) {
-                        throw new Exception(sprintf("Variable %s (Class '%s') doesn't have a method named '%s'", 
+                        throw new Exception(sprintf("Variable %s (Class '%s') doesn't have a method named '%s'",
                             $objname, get_class($object), $method));
                     }
 
@@ -342,15 +342,15 @@ function parse($code) {
 
                     /* $object has to exist and has to be a object */
                     $classname = $ts[$last - 3]['value'];
-                   
+
                     if (!class_exists($classname)) {
                         throw new Exception(sprintf('Class \'%s\' doesn\'t exist', $classname));
                     }
-                    
+
                     $method = $ts[$last - 1]['value'];
 
                     if (!in_array($method, get_class_methods($classname))) {
-                        throw new Exception(sprintf("Class '%s' doesn't have a method named '%s'", 
+                        throw new Exception(sprintf("Class '%s' doesn't have a method named '%s'",
                             $classname, $method));
                     }
                 } else if ($last >= 3 &&
@@ -363,11 +363,11 @@ function parse($code) {
 
                     /* $object has to exist and has to be a object */
                     $classname = $ts[$last - 3]['value'];
-                   
+
                     if (!class_exists($classname)) {
                         throw new Exception(sprintf('Class \'%s\' doesn\'t exist', $classname));
                     }
-                    
+
                     $methodname = $ts[$last - 1]['value'];
 
                     if (!isset($GLOBALS[ltrim($methodname, '$')])) {
@@ -376,7 +376,7 @@ function parse($code) {
                     $method = $GLOBALS[ltrim($methodname, '$')];
 
                     if (!in_array($method, get_class_methods($classname))) {
-                        throw new Exception(sprintf("Class '%s' doesn't have a method named '%s'", 
+                        throw new Exception(sprintf("Class '%s' doesn't have a method named '%s'",
                             $classname, $method));
                     }
 
@@ -445,7 +445,7 @@ function parse($code) {
                     $ts[$last - 1]['token'] == T_STRING ) {
                     /* func() */
                     $funcname = $ts[$last - 1]['value'];
-                    
+
                     if (!function_exists($funcname)) {
                         throw new Exception(sprintf("Function %s() doesn't exist", $funcname));
                     }
@@ -455,7 +455,7 @@ function parse($code) {
 
                     /* $object has to exist and has to be a object */
                     $funcname = $ts[$last - 1]['value'];
-                   
+
                     if (!isset($GLOBALS[ltrim($funcname, '$')])) {
                         throw new Exception(sprintf('Variable \'%s\' is not set', $funcname));
                     }
@@ -466,7 +466,7 @@ function parse($code) {
                     }
 
                 }
-                
+
                 array_push($braces, $token);
                 break;
             case '{':
@@ -495,11 +495,11 @@ function parse($code) {
                     $extendsname = $ts[$last - 1]['value'];
 
                     if (class_exists($classname, false)) {
-                        throw new Exception(sprintf("Class '%s' can't be redeclared", 
+                        throw new Exception(sprintf("Class '%s' can't be redeclared",
                             $classname));
                     }
                     if (!class_exists($extendsname, true)) {
-                        throw new Exception(sprintf("Can't extend '%s' ... from not existing Class '%s'", 
+                        throw new Exception(sprintf("Can't extend '%s' ... from not existing Class '%s'",
                             $classname, $extendsname));
                     }
                 } else if ($last >= 4 &&
@@ -514,11 +514,11 @@ function parse($code) {
                     $implements = $ts[$last - 1]['value'];
 
                     if (class_exists($classname, false)) {
-                        throw new Exception(sprintf("Class '%s' can't be redeclared", 
+                        throw new Exception(sprintf("Class '%s' can't be redeclared",
                             $classname));
                     }
                     if (!interface_exists($implements, false)) {
-                        throw new Exception(sprintf("Can't implement not existing Interface '%s' for Class '%s'", 
+                        throw new Exception(sprintf("Can't implement not existing Interface '%s' for Class '%s'",
                             $implements, $classname));
                     }
                 }
@@ -539,7 +539,7 @@ function parse($code) {
 
                     /* $object has to exist and has to be a object */
                     $objname = $ts[$last - 1]['value'];
-                   
+
                     if (!isset($GLOBALS[ltrim($objname, '$')])) {
                         throw new Exception(sprintf('Variable \'%s\' is not set', $objname));
                     }
@@ -551,9 +551,9 @@ function parse($code) {
                 }
                 break;
             }
-              
+
             $eval .= $token;
-        }    
+        }
     }
 
     $last = count($ts) - 1;
@@ -566,16 +566,16 @@ function parse($code) {
 
         /* $object has to exist and has to be a object */
         $classname = $ts[$last - 2]['value'];
-       
+
         if (!class_exists($classname)) {
             throw new Exception(sprintf('Class \'%s\' doesn\'t exist', $classname));
         }
-        
+
         $constname = $ts[$last - 0]['value'];
 
         $c = new ReflectionClass($classname);
         if (!$c->hasConstant($constname)) {
-            throw new Exception(sprintf("Class '%s' doesn't have a constant named '%s'", 
+            throw new Exception(sprintf("Class '%s' doesn't have a constant named '%s'",
                 $classname, $constname));
         }
     } else if ($last == 0 &&
@@ -584,7 +584,7 @@ function parse($code) {
         /* $var */
 
         $varname = $ts[$last - 0]['value'];
-       
+
         if (!isset($GLOBALS[ltrim($varname, '$')])) {
             throw new Exception(sprintf('Variable \'%s\' is not set', $varname));
         }
@@ -595,7 +595,7 @@ function parse($code) {
 
     if ($need_more || ';' === $token) {
         $need_semicolon = 0;
-    }  
+    }
 
     if ($need_return) {
         $eval = "return ".$eval;
@@ -606,7 +606,7 @@ function parse($code) {
     } else {
       $_SESSION['code'] = $eval;
     }
-            
+
     return $need_more;
 }
 ?>
