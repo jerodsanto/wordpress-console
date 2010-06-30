@@ -1,10 +1,10 @@
 (function($){
-  $.consoleController = function(){
-    this.counter        = 0;
-    this.queries        = [];
-    this.historyCounter = 0;
-
+  $.consoleController = function() {
     var self = this;
+
+    this.queries        = [];
+    this.counter        = 0;
+    this.historyCounter = 0;
 
     this.init = function() {
       self.version = WP_CONSOLE_VERSION;
@@ -153,36 +153,36 @@
           case "reload": case "r":
             self.reload(true);
             break;
-            default:
-              self.postJSON('query', val, {
-                success:  function(j) {
-                  // if result is not an error
-                  if (self.check(j)) {
-                    // print output and return value if they exist
-                    if (typeof j.rval != "undefined") {
-                      self.print("=> " + j.rval);
-                    }
-                    if (typeof j.output != "undefined") {
-                      if (j.output == "partial") {
-                        var p = "..";
-                        self.print('');
-                      } else {
-                        self.print(j.output);
-                      }
+          default:
+            self.postJSON('query', val, {
+              success:  function(j) {
+                // if result is not an error
+                if (self.check(j)) {
+                  // print output and return value if they exist
+                  if (typeof j.rval != "undefined") {
+                    self.print("=> " + j.rval);
+                  }
+                  if (typeof j.output != "undefined") {
+                    if (j.output == "partial") {
+                      var p = "..";
+                      self.print('');
+                    } else {
+                      self.print(j.output);
                     }
                   }
-                  self.doPrompt((typeof p != "undefined") ? p : null);
-                },
-                error:  function() {
-                  self.error("Most likely syntax. Forget the semicolon? If not, try 'reload' and re-execute");
-                  self.doPrompt();
                 }
-              });
-            } // end case
-          });
-        }
+                self.doPrompt((typeof p != "undefined") ? p : null);
+              },
+              error:  function() {
+                self.error("Most likely syntax. Forget the semicolon? If not, try 'reload' and re-execute");
+                self.doPrompt();
+              }
+            });
+        } // end switch
+      }); // end form.submit
+    }
 
-    this.reload = function(show_message){
+    this.reload = function(show_message) {
       var callbacks = {};
       if (show_message === true) {
         callbacks.success = function(j) {
@@ -193,7 +193,7 @@
       return this.postJSON('reload',callbacks);
     }
 
-    this.postJSON = function(page, value, callbacks, additional_data){
+    this.postJSON = function(page, value, callbacks, additional_data) {
       var request = {
         type:     'POST',
         dataType: 'json',
@@ -258,10 +258,9 @@
       }
     }
 
-    // Trigger init
-    this.init();
-
+    this.init(); // Trigger init
   }
+
   $(document).ready(function() { window.consoleController = new $.consoleController(); });
 })(jQuery);
 
