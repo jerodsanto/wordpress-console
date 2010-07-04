@@ -142,7 +142,8 @@
             break;
           case "help": case "?":
             self.print("\nWhat's New:\n" +
-            "  Tab-completion. Start a command and hit tab to see your options!\n" +
+            "  Admin functions: add_user(), wp_delete_user(), and friends!\n" +
+            "  Tab-completion:  Start a command and hit tab to see your options!\n" +
             "\n" +
             "Special Commands:\n" +
             "  clear  (c) = clears the console output\n" +

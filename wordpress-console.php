@@ -5,18 +5,17 @@ Plugin URI: http://github.com/sant0sk1/wordpress-console
 Description: An interactive console for WordPress developers
 Author: Jerod Santo
 Author URI: http://jerodsanto.net
-Version: 0.2.3
+Version: 0.3.0
 */
 
 class WordPressConsole {
-  public  $version;
+  public  $version = '0.3.0';
   private $url;
   private $secret;
 
   function __construct() {
-    $this->version = '0.2.3';
-    $this->url     = WP_PLUGIN_URL . "/wordpress-console/";
-    $this->secret  = $this->get_secret();
+    $this->url    = WP_PLUGIN_URL . "/wordpress-console/";
+    $this->secret = $this->get_secret();
 
     add_action( 'admin_menu', array( &$this, 'init' ) );
   }
