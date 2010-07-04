@@ -14,7 +14,9 @@ This plugin adds a "Console" page to the administrator's Tools menu which provid
 
 = New In This Version =
 
-1.  WordPress 3.0 Compatibility
+1.  Access to admin functions
+2.  Top-level menu item
+3.  Bug fix for deprecated function calls
 
 **SECURITY NOTICE**
 
@@ -46,6 +48,11 @@ You should fork the project on [GitHub](http://github.com/sant0sk1/wordpress-con
 2.  Tab Completion Example
 
 == Changelog ==
+
+= 0.3.0 =
+* Access to admin functions
+* Top-level menu item
+* Bug fix for deprecated function calls
 
 = 0.2.3 =
 * WordPress 3.0 Compatibility
