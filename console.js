@@ -66,8 +66,9 @@
             self.postJSON('complete', lastval, {
               success:  function(j) {
                 if (self.check(j)) {
-                  // if returned array only has one element, use it to fill current input
-                  if (j.length == 1) {
+                  if (j.length == 0) {
+                    return;
+                  } else if (j.length == 1) {
                     input.val(j).focus();
                   } else {
                     // print 3-column listing of array values
