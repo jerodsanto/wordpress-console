@@ -1,30 +1,31 @@
 <?php
-require_once dirname(__FILE__) . "/../../../wp-load.php";
+require_once( dirname( __FILE__ ) . "/../../../wp-load.php" );
+require_once( ABSPATH . 'wp-admin/includes/admin.php' );
 
-if (!session_id()) {
+if ( !session_id() ) {
   session_start();
 }
 
-@ob_end_clean();
-error_reporting(E_ALL);
-set_time_limit(0);
+ob_end_clean();
+error_reporting( E_ALL );
+set_time_limit( 0 );
 
-if (!function_exists('json_encode')) {
-  function json_encode($value) {
-    @require_once('lib/FastJSON.class.php');
+if ( !function_exists( 'json_encode' ) ) {
+  function json_encode( $value ) {
+    require_once( 'lib/FastJSON.class.php' );
     return FastJSON::encode($value);
   }
 }
 
-function console_error_handler($errno,$errorstr) {
-  error($errorstr);
+function console_error_handler( $errno, $errorstr ) {
+  error( $errorstr );
 }
 
-function error($error) {
-  exit(json_encode(array('error' => $error)));
+function error( $error ) {
+  exit( json_encode( array( 'error' => $error ) ) );
 }
 
-function logit($msg) {
+function logit( $msg ) {
   $file = "/tmp/console.log";
   $fh = fopen($file,'a');
   fwrite($fh,$msg);
@@ -34,29 +35,29 @@ function logit($msg) {
 
 // saves newly defined variables to session.
 // somebody please refactor this!
-function save_variables($existing, $current, $ignore) {
-  $new_vars  = array_diff(array_keys($current),array_keys($existing));
-  $user_vars = array_diff($new_vars,$ignore);
+function save_variables( $existing, $current, $ignore ) {
+  $new_vars  = array_diff( array_keys( $current ), array_keys( $existing ) );
+  $user_vars = array_diff( $new_vars, $ignore );
 
   $save_vars = array();
 
-  foreach($current as $key => $value) {
-    if (in_array($key,$user_vars)) {
+  foreach( $current as $key => $value ) {
+    if ( in_array( $key, $user_vars ) ) {
       $save_vars[$key] = $value;
     }
   }
 
   // purge any references to stdClass::__set_state() as advised here:
   // http://drupal.org/node/215375
-  $export = var_export($save_vars,true);
-  $final  = preg_replace("/stdClass::__set_state\((.*)\)/Ums",'$1',$export);
+  $export = var_export( $save_vars, true );
+  $final  = preg_replace( "/stdClass::__set_state\((.*)\)/Ums", '$1', $export );
   $_SESSION['console_vars'] = $final;
 }
 
 // this function was yoinked (and adjusted) from the 'php shell' project. See:
 // http://jan.kneschke.de/projects/php-shell
 // return int 0 if a executable statement is in the session buffer, non-zero otherwise
-function parse($code) {
+function parse( $code ) {
     ## remove empty lines
     if (trim($code) == '') return 1;
 
