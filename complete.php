@@ -1,109 +1,116 @@
 <?php
-require('common.php');
+require( 'common.php' );
 
-if (isset($_POST['partial'])) {
+if ( isset($_POST['partial'] ) ) {
   $secret = get_option('wordpress-console-secret');
-  if ( !$secret )
+  if ( !$secret ) {
     return;
-  if ( !isset($_POST['signature']) || !$_POST['signature'] )
+  }
+
+  if ( !isset( $_POST['signature'] ) || !$_POST['signature'] ) {
     return;
-  $partial = stripslashes($_POST['partial']);
-  if ( hash_hmac('sha1', $partial, $secret) != $_POST['signature'] )
+  }
+
+  $partial = stripslashes( $_POST['partial'] );
+  if ( hash_hmac( 'sha1', $partial, $secret ) != $_POST['signature'] ) {
     return;
-  if ( !eregi('([0-9a-z_-]+)$', $partial, $m) )
-	  die(json_encode( false ));
-  
-  $candidates = preg_grep("/^{$m[1]}/", complete($m[1]));
-  sort($candidates);
-  die(json_encode((array)$candidates));
+  }
+
+  if ( !preg_match( '#([0-9a-z_-]+)$#i', $partial, $m ) ) {
+    die( json_encode( false ) );
+  }
+
+  $candidates = preg_grep( "/^{$m[1]}/", complete( $m[1] ) );
+  sort( $candidates );
+  die( json_encode( ( array ) $candidates ) );
 } else {
-  error('Error initializing session.');
+  error( 'Error initializing session.' );
 }
 
 // returns array of possible matches
-function complete($string) {
+function complete( $string ) {
     /**
-    * parse the line-buffer backwards to see if we have a 
+    * parse the line-buffer backwards to see if we have a
     * - constant
-    * - function 
+    * - function
     * - variable
     */
 
     $m = array();
 
-    if (preg_match('#\$([A-Za-z0-9_]+)->#', $string, $a)) {
+    if ( preg_match( '#\$([A-Za-z0-9_]+)->#', $string, $a ) ) {
         /* check for $o->... */
         $name = $a[1];
 
-        if (isset($GLOBALS[$name]) && is_object($GLOBALS[$name])) {
-            $c = get_class_methods($GLOBALS[$name]);
+        if ( isset( $GLOBALS[$name] ) && is_object( $GLOBALS[$name] ) ) {
+            $c = get_class_methods( $GLOBALS[$name] );
 
-            foreach ($c as $v) {
+            foreach ( $c as $v ) {
                 $m[] = $v.'(';
             }
-            $c = get_class_vars(get_class($GLOBALS[$name]));
+            $c = get_class_vars( get_class( $GLOBALS[$name] ) );
 
-            foreach ($c as $k => $v) {
+            foreach ( $c as $k => $v ) {
                 $m[] = $k;
             }
 
             return $m;
         }
-    } else if (preg_match('#\$([A-Za-z0-9_]+)\[([^\]]+)\]->#', $string, $a)) {
+    } else if ( preg_match( '#\$([A-Za-z0-9_]+)\[([^\]]+)\]->#', $string, $a ) ) {
         /* check for $o[...]->... */
         $name = $a[1];
 
-        if (isset($GLOBALS[$name]) && 
-            is_array($GLOBALS[$name]) &&
-            isset($GLOBALS[$name][$a[2]])) {
+        if ( isset( $GLOBALS[$name] ) &&
+            is_array( $GLOBALS[$name] ) &&
+            isset( $GLOBALS[$name][$a[2]] ) ) {
 
-            $c = get_class_methods($GLOBALS[$name][$a[2]]);
+            $c = get_class_methods( $GLOBALS[$name][$a[2]] );
 
-            foreach ($c as $v) {
+            foreach ( $c as $v ) {
                 $m[] = $v.'(';
             }
-            $c = get_class_vars(get_class($GLOBALS[$name][$a[2]]));
+            $c = get_class_vars( get_class( $GLOBALS[$name][$a[2]] ) );
 
-            foreach ($c as $k => $v) {
+            foreach ( $c as $k => $v ) {
                 $m[] = $k;
             }
             return $m;
         }
 
-    } else if (preg_match('#([A-Za-z0-9_]+)::#', $string, $a)) {
+    } else if ( preg_match( '#([A-Za-z0-9_]+)::#', $string, $a ) ) {
         /* check for Class:: */
         $name = $a[1];
 
-        if (class_exists($name, false)) {
-            $c = get_class_methods($name);
+        if ( class_exists( $name, false ) ) {
+            $c = get_class_methods( $name );
 
-            foreach ($c as $v) {
-                $m[] = sprintf('%s::%s(', $name, $v);
+            foreach ( $c as $v ) {
+                $m[] = sprintf( '%s::%s(', $name, $v );
             }
 
-            $cl = new ReflectionClass($name);
+            $cl = new ReflectionClass( $name );
             $c = $cl->getConstants();
 
-            foreach ($c as $k => $v) {
-                $m[] = sprintf('%s::%s', $name, $k);
+            foreach ( $c as $k => $v ) {
+                $m[] = sprintf( '%s::%s', $name, $k );
             }
 
             return $m;
         }
-    } else if (preg_match('#\$([a-zA-Z]?[a-zA-Z0-9_]*)$#', $string)) {
-        $m = array_keys($GLOBALS);
+    } else if ( preg_match( '#\$([a-zA-Z]?[a-zA-Z0-9_]*)$#', $string ) ) {
+        $m = array_keys( $GLOBALS );
 
         return $m;
-    } else if (preg_match('#new #', $string)) {
+    } else if ( preg_match( '#new #', $string ) ) {
         $c = get_declared_classes();
-    
-        foreach ($c as $v) {
+
+        foreach ( $c as $v ) {
             $m[] = $v.'(';
         }
 
         return $m;
-    } else if (preg_match('#^:set #', $string)) {
-        foreach (PHP_Shell_Options::getInstance()->getOptions() as $v) {
+    } else if ( preg_match( '#^:set #', $string ) ) {
+        foreach ( PHP_Shell_Options::getInstance()->getOptions() as $v ) {
             $m[] = $v;
         }
 
@@ -112,23 +119,23 @@ function complete($string) {
 
     $f = get_defined_functions();
 
-    foreach ($f['internal'] as $v) {
+    foreach ( $f['internal'] as $v ) {
         $m[] = $v.'(';
     }
 
-    foreach ($f['user'] as $v) {
+    foreach ( $f['user'] as $v ) {
         $m[] = $v.'(';
     }
-    
+
     $c = get_declared_classes();
 
-    foreach ($c as $v) {
+    foreach ( $c as $v ) {
         $m[] = $v.'::';
     }
 
     $c = get_defined_constants();
 
-    foreach ($c as $k => $v) {
+    foreach ( $c as $k => $v ) {
         $m[] = $k;
     }
 
