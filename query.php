@@ -43,7 +43,7 @@ try {
     $response['output'] = ob_get_contents();
     ob_end_clean(); // quietly discard buffered output
 
-    if ( $rval != NULL ) {
+    if ( isset( $rval ) ) {
       ob_start(); // do it again, this time for the return value
       print_r( $rval );
       $response['rval'] = ob_get_contents();
