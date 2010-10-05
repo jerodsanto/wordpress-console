@@ -148,7 +148,11 @@
             "Special Commands:\n" +
             "  clear  (c) = clears the console output\n" +
             "  help   (?) = prints this help text\n" +
-            "  reload (r) = flushes all variables and partial statements");
+            "  reload (r) = flushes all variables and partial statements\n" +
+            "\n" +
+            "Why are all my objects of type stdClass?\n" +
+            "  Your class needs to implement the __set_state() static method to\n" +
+            "  be restored properly. You should Google it.");
             self.doPrompt()
             break;
           case "reload": case "r":
