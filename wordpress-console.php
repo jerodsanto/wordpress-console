@@ -5,11 +5,11 @@ Plugin URI: http://github.com/sant0sk1/wordpress-console
 Description: An interactive console for WordPress developers
 Author: Jerod Santo
 Author URI: http://jerodsanto.net
-Version: 0.3.0
+Version: 0.3.1
 */
 
 class WordPressConsole {
-  public  $version = '0.3.0';
+  public  $version = '0.3.1';
   private $url;
   private $secret;
 
@@ -42,7 +42,7 @@ class WordPressConsole {
 
   function scripts() {
     wp_enqueue_script( 'console', $this->url . 'console.js', array( 'jquery' ) );
-    wp_enqueue_script( 'sha1', $this->url . 'sha1.js', array( 'jquery' ) );
+    wp_enqueue_script( 'sha1',    $this->url . 'sha1.js',    array( 'jquery' ) );
   }
 
   function styles() {
