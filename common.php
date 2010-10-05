@@ -7,7 +7,7 @@ if ( !session_id() ) {
 }
 
 ob_end_clean();
-error_reporting( E_ALL );
+error_reporting( E_ALL ^ E_PARSE );
 set_time_limit( 0 );
 
 if ( !function_exists( 'json_encode' ) ) {
@@ -47,11 +47,21 @@ function save_variables( $existing, $current, $ignore ) {
     }
   }
 
-  // purge any references to stdClass::__set_state() as advised here:
-  // http://drupal.org/node/215375
   $export = var_export( $save_vars, true );
-  $final  = preg_replace( "/stdClass::__set_state\((.*)\)/Ums", '$1', $export );
-  $_SESSION['console_vars'] = $final;
+  // special consideration for variables that are objects
+  // see: http://www.thoughtlabs.com/2008/02/02/phps-mystical-__set_state-method/
+  $export  = preg_replace_callback( "/(\w+)::__set_state/Ums", 'class_set_state_check', $export );
+  $_SESSION['console_vars'] = $export;
+}
+
+// classes to be restored need to implement __set_state() function.
+// if they don't have it, we will convert to stdClass object.
+function class_set_state_check($matches) {
+  if (method_exists($matches[1], '__set_state')) {
+    return $matches[0];
+  } else {
+    return '(object) ';
+  }
 }
 
 // this function was yoinked (and adjusted) from the 'php shell' project. See:
