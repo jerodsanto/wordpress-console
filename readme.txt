@@ -3,7 +3,7 @@ Contributors: sant0sk1
 Donate link: http://jerodsanto.net
 Tags: admin, development, ajax, interactive, developer, shell, console
 Requires at least: 2.8
-Tested up to: 3.0
+Tested up to: 3.0.1
 Stable tag: trunk
 
 An interactive console for WordPress developers
@@ -14,9 +14,7 @@ This plugin adds a "Console" page to the administrator's Tools menu which provid
 
 = New In This Version =
 
-1.  Access to admin functions
-2.  Top-level menu item
-3.  Bug fix for deprecated function calls
+1.  Better handling of custom class objects
 
 **SECURITY NOTICE**
 
@@ -26,7 +24,7 @@ This plugin is for *development*. Do NOT run this plugin on your production serv
 
 1.  Upload wordpress-console/ directory to the wp-content/plugins directory.
 2.  Activate WordPress Console through the 'Plugins' menu in WordPress.
-3.  Browse to 'Tools' -> 'Console' and have at it.
+3.  There is now a 'Console' item in the left-hand menu
 
 == Frequently Asked Questions ==
 
@@ -48,6 +46,9 @@ You should fork the project on [GitHub](http://github.com/sant0sk1/wordpress-con
 2.  Tab Completion Example
 
 == Changelog ==
+
+= 0.3.1 =
+* Better handling of custom class objects
 
 = 0.3.0 =
 * Access to admin functions
