@@ -1,5 +1,5 @@
 (function($){
-  $.consoleController = function() {
+  $.wpConsole = function() {
     var self = this;
 
     self.queries      = [];
@@ -47,9 +47,20 @@
               input.val("");
             }
             break;
-          case 17: // ctrl+l
-            self.clear();
+          case 76: // l
+            if (e.ctrlKey) {
+              self.clear();
+            }
             break;
+          case 65: // a
+            if (e.ctrlKey) {
+              input.setCursorPosition(0);
+            }
+            break;
+          case 69: // e
+          if (e.ctrlKey) {
+            input.setCursorPosition(input.val().length);
+          }
         } // switch
       });
 
@@ -289,6 +300,20 @@
     self.init();
   }
 
-  $(document).ready(function() { window.consoleController = new $.consoleController(); });
-})(jQuery);
+  // thanks to: http://stackoverflow.com/questions/499126/jquery-set-cursor-position-in-text-area
+  $.fn.setCursorPosition = function(pos) {
+    if ($(this).get(0).setSelectionRange) {
+      $(this).get(0).setSelectionRange(pos, pos);
+    } else if ($(this).get(0).createTextRange) {
+      var range = $(this).get(0).createTextRange();
+      range.collapse(true);
+      range.moveEnd('character', pos);
+      range.moveStart('character', pos);
+      range.select();
+    }
+  }
 
+  $(function() {
+    window.wpConsole = new $.wpConsole();
+  });
+})(jQuery);
