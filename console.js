@@ -2,11 +2,11 @@
   $.consoleController = function() {
     var self = this;
 
-    this.queries        = [];
-    this.counter        = 0;
-    this.historyCounter = 0;
+    self.queries      = [];
+    self.counter      = 0;
+    self.historyIndex = 0;
 
-    this.init = function() {
+    self.init = function() {
       self.version = WP_CONSOLE_VERSION;
       self.url     = WP_CONSOLE_URL;
       self.secret  = WP_CONSOLE_SECRET;
@@ -19,39 +19,42 @@
         self.shell.find('input.current').focus();
       });
 
-      // listen for key presses (up, down, and tab)
+      // listen for key presses (up, down, tab and ctrl+l)
       $(document).keyup(function(e) {
-
-        // get key code
         var key   = e.charCode ? e.charCode : e.keyCode ? e.keyCode : 0;
-        // get current input
         var input = self.shell.find('input.current:last');
 
         switch (key) {
           case 38: // up
-            lastQuery = self.queries[self.historyCounter-1];
+            var lastQuery = self.queries[self.historyIndex];
             if (typeof lastQuery != "undefined") {
-              self.historyCounter--;
+              self.historyIndex--;
               input.val(lastQuery).focus();
+            }
+            // no negative history allowed
+            if (self.historyIndex < 0) {
+              self.historyIndex = 0;
             }
             break;
           case 40: // down
-            nextQuery = self.queries[self.historyCounter+1];
+            var nextQuery = self.queries[self.historyIndex+1];
             if (typeof nextQuery != "undefined") {
-              self.historyCounter++;
+              self.historyIndex++;
               input.val(nextQuery).focus();
             } else {
-              self.historyCounter = self.queries.length;
+              // put it at the end
+              self.historyIndex = self.queries.length - 1;
               input.val("");
             }
+            break;
+          case 17: // ctrl+l
+            self.clear();
             break;
         } // switch
       });
 
       $(document).keydown(function(e) {
-        // get key code
         var key   = e.charCode ? e.charCode : e.keyCode ? e.keyCode : 0;
-        // get current input
         var input = self.shell.find('input.current:last');
 
         switch (key) {
@@ -95,13 +98,8 @@
       self.doPrompt();
     }
 
-    this.doPrompt = function(prompt) {
-
-      // increment prompt counter
+    self.doPrompt = function(prompt) {
       self.counter++;
-
-      // reset historyCounter
-      self.historyCounter = self.counter;
 
       // default prompt to >> unless passed in as argument
       prompt = (prompt) ? prompt : ">>";
@@ -117,28 +115,25 @@
 
       self.shell.append( $row );
 
-      // determine input width
-      var input_width = self.shell.width() - 50;
-
       // set width and focus input
+      var input_width = self.shell.width() - 50;
       $input.width( input_width ).focus();
 
       // listen for submit
       $form.submit(function(e) {
         var val = $input.val();
 
-        // do not use normal http post
         e.preventDefault();
 
-        // save in history and handle accordingly
         $input.removeClass("current");
 
-        self.queries[self.counter] = val;
+        // save in history and handle accordingly
+        self.historyIndex = self.queries.length;
+        self.queries[self.historyIndex] = val;
 
         switch(val) {
           case "clear": case "c":
-            self.$header.siblings().empty();
-            self.doPrompt()
+            self.clear();
             break;
           case "help": case "?":
             self.print("\nWhat's New:\n" +
@@ -153,7 +148,7 @@
             "Why are all my objects of type stdClass?\n" +
             "  Your class needs to implement the __set_state() static method to\n" +
             "  be restored properly. You should Google it.");
-            self.doPrompt()
+            self.doPrompt();
             break;
           case "reload": case "r":
             self.reload(true);
@@ -187,7 +182,13 @@
       }); // end form.submit
     }
 
-    this.reload = function(show_message) {
+    self.clear = function() {
+      self.$header.siblings().empty();
+      self.counter = 0;
+      self.doPrompt();
+    }
+
+    self.reload = function(show_message) {
       var callbacks = {};
       if (show_message === true) {
         callbacks.success = function(j) {
@@ -195,10 +196,10 @@
           self.doPrompt();
         }
       }
-      return this.postJSON('reload',callbacks);
+      return self.postJSON('reload',callbacks);
     }
 
-    this.postJSON = function(page, value, callbacks, additional_data) {
+    self.postJSON = function(page, value, callbacks, additional_data) {
       var request = {
         type:     'POST',
         dataType: 'json',
@@ -235,58 +236,59 @@
       return $.ajax(request);
     }
 
-    this.about = function() {
+    self.about = function() {
       self.$header  = $('<div id="header">' +
       'WordPress Console [' + self.version + '] by ' +
       '<a target="_blank" href="http://jerodsanto.net">Jerod Santo</a>' +
       '</div>');
-      this.shell.append(self.$header);
+      self.shell.append(self.$header);
     }
 
-    this.print = function(string) {
+    self.print = function(string) {
       // Using text() escapes HTML to output visible tags
       var result = $('<pre></pre>').text(string);
-      this.shell.append( $('<div class="result"></div>').append(result) );
+      self.shell.append( $('<div class="result"></div>').append(result) );
     }
 
-    this.error = function(string) {
-      this.shell.append('<div class="err">Error: ' + string + '</div>');
+    self.error = function(string) {
+      self.shell.append('<div class="err">Error: ' + string + '</div>');
     }
 
-    this.check = function(json) {
+    self.check = function(json) {
       // make sure json result is not an error
       if (typeof json.error != "undefined") {
-        this.error(json.error);
+        self.error(json.error);
         return false;
       } else {
         return true;
       }
     }
 
-    this.init(); // Trigger init
+    // HELPER FUNCTIONS
+    function buffer_to_longest(array) {
+     var longest = array[0].length;
+      for (var i=1; i < array.length; i++) {
+        if (array[i].length > longest)
+          longest = array[i].length;
+      };
+
+      for (var i=0; i < array.length; i++) {
+        array[i] = pad(array[i],longest);
+      };
+
+      return array;
+    }
+
+    function pad(string,length) {
+      while (string.length < length) {
+        string += " ";
+      }
+      return string;
+    }
+
+    self.init();
   }
 
   $(document).ready(function() { window.consoleController = new $.consoleController(); });
 })(jQuery);
 
-// HELPER FUNCTIONS
-function buffer_to_longest(array) {
- var longest = array[0].length;
-  for (var i=1; i < array.length; i++) {
-    if (array[i].length > longest)
-      longest = array[i].length;
-  };
-
-  for (var i=0; i < array.length; i++) {
-    array[i] = pad(array[i],longest);
-  };
-
-  return array;
-}
-
-function pad(string,length) {
-  while (string.length < length) {
-    string += " ";
-  }
-  return string;
-}
