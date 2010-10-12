@@ -14,7 +14,7 @@ This plugin adds a "Console" page to the administrator's Tools menu which provid
 
 = New In This Version =
 
-1.  Better handling of custom class objects
+1.  Keyboard shortcuts! (ctrl+l, ctrl+a, ctrl+e)
 
 **SECURITY NOTICE**
 
@@ -46,6 +46,9 @@ You should fork the project on [GitHub](http://github.com/sant0sk1/wordpress-con
 2.  Tab Completion Example
 
 == Changelog ==
+
+= 0.3.2 =
+* Keyboard shortcuts (ctrl+l, ctrl+a, ctrl+e)
 
 = 0.3.1 =
 * Better handling of custom class objects
