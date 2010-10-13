@@ -10,11 +10,11 @@ An interactive console for WordPress developers
 
 == Description ==
 
-This plugin adds a "Console" page to the administrator's Tools menu which provides a JavaScript-based interactive console that loads the WordPress environment. It allows execution of arbitrary PHP code as well as anything defined by WordPress or activated plugins. This is awesome for plugin developers and people learning PHP and/or the WordPress API. Still not convinced? [Watch a screencast!](http://vimeo.com/5300607)
+This plugin adds a "Console" page to the administrator's menu which provides a JavaScript-based interactive console that loads the WordPress environment. It allows execution of arbitrary PHP code as well as anything defined by WordPress or activated plugins. This is awesome for plugin developers and people learning PHP and/or the WordPress API. Still not convinced? [Watch a screencast!](http://vimeo.com/5300607)
 
 = New In This Version =
 
-1.  Keyboard shortcuts! (ctrl+l, ctrl+a, ctrl+e)
+1.  https support
 
 **SECURITY NOTICE**
 
@@ -46,6 +46,9 @@ You should fork the project on [GitHub](http://github.com/sant0sk1/wordpress-con
 2.  Tab Completion Example
 
 == Changelog ==
+
+= 0.3.3 =
+* https support
 
 = 0.3.2 =
 * Keyboard shortcuts (ctrl+l, ctrl+a, ctrl+e)
