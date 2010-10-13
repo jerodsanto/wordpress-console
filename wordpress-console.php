@@ -8,13 +8,33 @@ Author URI: http://jerodsanto.net
 Version: 0.3.2
 */
 
+if ( ! function_exists( 'is_ssl' ) ) :
+function is_ssl() {
+  if ( isset($_SERVER['HTTPS']) ) {
+    if ( 'on' == strtolower($_SERVER['HTTPS']) ) {
+      return true;
+    }
+    if ( '1' == $_SERVER['HTTPS'] ) {
+      return true;
+    }
+  } elseif ( isset($_SERVER['SERVER_PORT']) && ( '443' == $_SERVER['SERVER_PORT'] ) ) {
+    return true;
+  }
+  return false;
+}
+endif;
+
 class WordPressConsole {
   public  $version = '0.3.2';
   private $url;
   private $secret;
 
   function __construct() {
-    $this->url    = WP_PLUGIN_URL . "/wordpress-console/";
+    $site_url = get_option( 'siteurl' );
+    if ( is_ssl() ) {
+      $site_url = str_replace( 'http://' , 'https://' , $site_url );
+    }
+    $this->url    = $site_url . "/wp-content/plugins/wordpress-console/";
     $this->secret = $this->get_secret();
 
     add_action( 'admin_menu', array( &$this, 'init' ) );
