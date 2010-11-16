@@ -14,7 +14,7 @@ This plugin adds a "Console" page to the administrator's menu which provides a J
 
 = New In This Version =
 
-1.  https support
+1.  No more WP_DEBUG deprecation warnings (thanks to Demetris Kikizas for the notice & fix)
 
 **SECURITY NOTICE**
 
@@ -46,6 +46,9 @@ You should fork the project on [GitHub](http://github.com/sant0sk1/wordpress-con
 2.  Tab Completion Example
 
 == Changelog ==
+
+= 0.3.4 =
+* No more WP_DEBUG deprecation warnings
 
 = 0.3.3 =
 * https support
