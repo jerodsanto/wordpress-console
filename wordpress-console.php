@@ -41,7 +41,7 @@ class WordPressConsole {
   }
 
   function init() {
-    $page = add_menu_page( 'Console', 'Console', 10, 'console',
+    $page = add_menu_page( 'Console', 'Console', 'administrator', 'console',
       array( &$this, 'admin' ), $this->url . "icon16.png" );
     add_action( "admin_print_scripts-$page", array( &$this, 'scripts' ) );
     add_action( "admin_print_styles-$page", array( &$this, 'styles' ) );
