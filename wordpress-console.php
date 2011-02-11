@@ -30,13 +30,18 @@ class WordPressConsole {
   private $secret;
 
   function __construct() {
-    $site_url = get_option( 'siteurl' );
-    if ( is_ssl() ) {
-      $site_url = str_replace( 'http://' , 'https://' , $site_url );
+    if ( version_compare( get_bloginfo( 'version' ) , '3.0' , '<' ) ) {
+      $plugin_url = ( get_option( 'siteurl' ) . "/wp-content/plugins" );
+    } else {
+      $plugin_url = WP_PLUGIN_URL;
     }
-    $this->url    = $site_url . "/wp-content/plugins/wordpress-console/";
-    $this->secret = $this->get_secret();
 
+    if ( is_ssl() ) {
+      $plugin_url = str_replace( 'http://' , 'https://' , $plugin_url );
+    }
+
+    $this->url    = $plugin_url . "/" . str_replace( basename( __FILE__ ), "", plugin_basename( __FILE__ ) );
+    $this->secret = $this->get_secret();
     add_action( 'admin_menu', array( &$this, 'init' ) );
   }
 
@@ -52,6 +57,7 @@ class WordPressConsole {
       var WP_CONSOLE_VERSION = <?php echo json_encode( $this->version ) ?>;
       var WP_CONSOLE_URL     = <?php echo json_encode( $this->url )     ?>;
       var WP_CONSOLE_SECRET  = <?php echo json_encode( $this->secret )  ?>;
+      var WP_ROOT_PATH       = <?php echo json_encode( ABSPATH ) ?>;
     </script>
     <div class="wrap">
       <h2>WordPress Console: "?" for help menu</h2>

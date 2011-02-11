@@ -10,19 +10,20 @@
       self.version = WP_CONSOLE_VERSION;
       self.url     = WP_CONSOLE_URL;
       self.secret  = WP_CONSOLE_SECRET;
+      self.root    = WP_ROOT_PATH;
 
       // create shell div
-      self.shell = $('<div id="shell"></div>').appendTo($('#wrapper'));
+      self.shell = $("<div id='shell'></div>").appendTo($("#wrapper"));
 
       // listen for clicks on the shell
       self.shell.click(function() {
-        self.shell.find('input.current').focus();
+        self.shell.find("input.current").focus();
       });
 
       // listen for key presses (up, down, tab and ctrl+l)
       $(document).keyup(function(e) {
         var key   = e.charCode ? e.charCode : e.keyCode ? e.keyCode : 0;
-        var input = self.shell.find('input.current:last');
+        var input = self.shell.find("input.current:last");
 
         switch (key) {
           case 38: // up
@@ -66,7 +67,7 @@
 
       $(document).keydown(function(e) {
         var key   = e.charCode ? e.charCode : e.keyCode ? e.keyCode : 0;
-        var input = self.shell.find('input.current:last');
+        var input = self.shell.find("input.current:last");
 
         switch (key) {
           case 38:
@@ -77,7 +78,7 @@
             var lastval = input.val();
             e.preventDefault(); // don't do browser default action
 
-            self.postJSON('complete', lastval, {
+            self.postJSON("complete", lastval, {
               success:  function(j) {
                 if (self.check(j)) {
                   if (j.length == 0) {
@@ -92,7 +93,7 @@
                       self.print(line.join(" "));
                     }
                     self.doPrompt();
-                    self.shell.find('input.current:last').val(lastval);
+                    self.shell.find("input.current:last").val(lastval);
                   }
                 }
               }
@@ -116,8 +117,8 @@
       prompt = (prompt) ? prompt : ">>";
 
       // append prompt to shell
-      var $row      = $('<div class="row" id="' + self.counter + '"></div>' );
-      var $prompt   = $('<span class="prompt">' + prompt + '</span>');
+      var $row      = $("<div class='row' id='" + self.counter + "'></div>");
+      var $prompt   = $("<span class='prompt'>" + prompt + "</span>");
       var $form     = $("<form></form>");
       var $input    = $("<input class='current' type='text' />");
 
@@ -165,7 +166,7 @@
             self.reload(true);
             break;
           default:
-            self.postJSON('query', val, {
+            self.postJSON("query", val, {
               success:  function(j) {
                 // if result is not an error
                 if (self.check(j)) {
@@ -176,7 +177,7 @@
                   if (typeof j.output != "undefined") {
                     if (j.output == "partial") {
                       var p = "..";
-                      self.print('');
+                      self.print("");
                     } else {
                       self.print(j.output);
                     }
@@ -207,14 +208,16 @@
           self.doPrompt();
         }
       }
-      return self.postJSON('reload',callbacks);
+      return self.postJSON("reload", callbacks);
     }
 
     self.postJSON = function(page, value, callbacks, additional_data) {
       var request = {
-        type:     'POST',
-        dataType: 'json',
-        data: {}
+        type:     "POST",
+        dataType: "json",
+        data: {
+          "root": self.root
+        }
       };
       var key = null;
 
@@ -226,7 +229,7 @@
       if (callbacks)       request = $.extend(request, callbacks);
       if (additional_data) request = $.extend(request, additional_data);
 
-      switch(page){
+      switch(page) {
         case "query":
           key = "query";
           break;
@@ -248,21 +251,21 @@
     }
 
     self.about = function() {
-      self.$header  = $('<div id="header">' +
-      'WordPress Console [' + self.version + '] by ' +
-      '<a target="_blank" href="http://jerodsanto.net">Jerod Santo</a>' +
-      '</div>');
+      self.$header  = $("<div id='header'>" +
+      "WordPress Console [" + self.version + "] by " +
+      "<a target='_blank' href='http://jerodsanto.net'>Jerod Santo</a>" +
+      "</div>");
       self.shell.append(self.$header);
     }
 
     self.print = function(string) {
       // Using text() escapes HTML to output visible tags
-      var result = $('<pre></pre>').text(string);
-      self.shell.append( $('<div class="result"></div>').append(result) );
+      var result = $("<pre></pre>").text(string);
+      self.shell.append( $("<div class='result'></div>").append(result) );
     }
 
     self.error = function(string) {
-      self.shell.append('<div class="err">Error: ' + string + '</div>');
+      self.shell.append("<div class='err'>Error: " + string + "</div>");
     }
 
     self.check = function(json) {
@@ -302,13 +305,14 @@
 
   // thanks to: http://stackoverflow.com/questions/499126/jquery-set-cursor-position-in-text-area
   $.fn.setCursorPosition = function(pos) {
-    if ($(this).get(0).setSelectionRange) {
-      $(this).get(0).setSelectionRange(pos, pos);
-    } else if ($(this).get(0).createTextRange) {
-      var range = $(this).get(0).createTextRange();
+    var $self = $(this);
+    if ($self.get(0).setSelectionRange) {
+      $self.get(0).setSelectionRange(pos, pos);
+    } else if ($self.get(0).createTextRange) {
+      var range = $self.get(0).createTextRange();
       range.collapse(true);
-      range.moveEnd('character', pos);
-      range.moveStart('character', pos);
+      range.moveEnd("character", pos);
+      range.moveStart("character", pos);
       range.select();
     }
   }

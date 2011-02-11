@@ -1,6 +1,14 @@
 <?php
-require_once( dirname( __FILE__ ) . "/../../../wp-load.php" );
-require_once( ABSPATH . 'wp-admin/includes/admin.php' );
+# try to load the wordpress environment from passed in location known by the client
+# otherwise, fall back to the mostly (but sometimes not) safe assumption that it is
+# up 3 directories from this file.
+if ( isset( $_POST["root"] ) ) {
+  require_once( $_POST["root"] . "/wp-load.php" );
+} else {
+  require_once( dirname( __FILE__ ) . "/../../../wp-load.php" );
+}
+
+require_once( ABSPATH . "wp-admin/includes/admin.php" );
 
 if ( !session_id() ) {
   session_start();
@@ -10,9 +18,9 @@ ob_end_clean();
 error_reporting( E_ALL ^ E_PARSE );
 set_time_limit( 0 );
 
-if ( !function_exists( 'json_encode' ) ) {
+if ( !function_exists( "json_encode" ) ) {
   function json_encode( $value ) {
-    require_once( 'lib/FastJSON.class.php' );
+    require_once( "lib/FastJSON.class.php" );
     return FastJSON::encode($value);
   }
 }
@@ -22,12 +30,12 @@ function console_error_handler( $errno, $errorstr ) {
 }
 
 function error( $error ) {
-  exit( json_encode( array( 'error' => $error ) ) );
+  exit( json_encode( array( "error" => $error ) ) );
 }
 
 function logit( $msg ) {
   $file = "/tmp/console.log";
-  $fh = fopen($file,'a');
+  $fh = fopen($file,"a");
   fwrite($fh,$msg);
   fwrite($fh,"\n\n");
   fclose($fh);
@@ -50,17 +58,17 @@ function save_variables( $existing, $current, $ignore ) {
   $export = var_export( $save_vars, true );
   // special consideration for variables that are objects
   // see: http://www.thoughtlabs.com/2008/02/02/phps-mystical-__set_state-method/
-  $export  = preg_replace_callback( "/(\w+)::__set_state/Ums", 'class_set_state_check', $export );
-  $_SESSION['console_vars'] = $export;
+  $export  = preg_replace_callback( "/(\w+)::__set_state/Ums", "class_set_state_check", $export );
+  $_SESSION["console_vars"] = $export;
 }
 
 // classes to be restored need to implement __set_state() function.
 // if they don't have it, we will convert to stdClass object.
 function class_set_state_check($matches) {
-  if (method_exists($matches[1], '__set_state')) {
+  if (method_exists($matches[1], "__set_state")) {
     return $matches[0];
   } else {
-    return '(object) ';
+    return "(object) ";
   }
 }
 
@@ -69,15 +77,15 @@ function class_set_state_check($matches) {
 // return int 0 if a executable statement is in the session buffer, non-zero otherwise
 function parse( $code ) {
     ## remove empty lines
-    if (trim($code) == '') return 1;
+    if (trim($code) == "") return 1;
 
-    $t = token_get_all('<?php '.$code.' ?>');
+    $t = token_get_all("<?php ".$code." ?>");
     // logit($code);
 
     $need_semicolon = 1; /* do we need a semicolon to complete the statement ? */
     $need_return = 1;    /* can we prepend a return to the eval-string ? */
     $open_comment = 0;   /* a open multi-line comment */
-    $eval = '';          /* code to be eval()'ed later */
+    $eval = "";          /* code to be eval()'ed later */
     $braces = array();   /* to track if we need more closing braces */
 
     $methods = array();  /* to track duplicate methods in a class declaration */
@@ -206,18 +214,18 @@ function parse( $code ) {
                 $ts[] = array("token" => $token[0], "value" => $token[1]);
             }
         } else {
-            $ts[] = array("token" => $token, "value" => '');
+            $ts[] = array("token" => $token, "value" => "");
 
             $last = count($ts) - 1;
 
             switch ($token) {
-            case '(':
+            case "(":
                 /* walk backwards through the tokens */
 
                 if ($last >= 4 &&
-                    $ts[$last - 1]['token'] == T_STRING &&
-                    $ts[$last - 2]['token'] == T_OBJECT_OPERATOR &&
-                    $ts[$last - 3]['token'] == ')' ) {
+                    $ts[$last - 1]["token"] == T_STRING &&
+                    $ts[$last - 2]["token"] == T_OBJECT_OPERATOR &&
+                    $ts[$last - 3]["token"] == ")" ) {
                     /* func()->method()
                     *
                     * we can't know what func() is return, so we can't
@@ -225,12 +233,12 @@ function parse( $code ) {
                     *
                     */
                 } else if ($last >= 3 &&
-                    $ts[0]['token'] != T_CLASS && /* if we are not in a class definition */
-                    $ts[0]['token'] != T_ABSTRACT && /* if we are not in a class definition */
-                    $ts[1]['token'] != T_CLASS && /* if we are not in a class definition */
-                    $ts[$last - 1]['token'] == T_STRING &&
-                    $ts[$last - 2]['token'] == T_OBJECT_OPERATOR &&
-                    $ts[$last - 3]['token'] == T_VARIABLE ) {
+                    $ts[0]["token"] != T_CLASS && /* if we are not in a class definition */
+                    $ts[0]["token"] != T_ABSTRACT && /* if we are not in a class definition */
+                    $ts[1]["token"] != T_CLASS && /* if we are not in a class definition */
+                    $ts[$last - 1]["token"] == T_STRING &&
+                    $ts[$last - 2]["token"] == T_OBJECT_OPERATOR &&
+                    $ts[$last - 3]["token"] == T_VARIABLE ) {
 
                     /* $object->method( */
 
@@ -238,25 +246,25 @@ function parse( $code ) {
                     $in_catch = 0;
 
                     foreach ($ts as $v) {
-                        if ($v['token'] == T_CATCH) {
+                        if ($v["token"] == T_CATCH) {
                             $in_catch = 1;
                         }
                     }
 
                     if (!$in_catch) {
                         /* $object has to exist and has to be a object */
-                        $objname = $ts[$last - 3]['value'];
+                        $objname = $ts[$last - 3]["value"];
 
-                        if (!isset($GLOBALS[ltrim($objname, '$')])) {
+                        if (!isset($GLOBALS[ltrim($objname, "$")])) {
                             throw new Exception(sprintf('Variable \'%s\' is not set', $objname));
                         }
-                        $object = $GLOBALS[ltrim($objname, '$')];
+                        $object = $GLOBALS[ltrim($objname, "$")];
 
                         if (!is_object($object)) {
                             throw new Exception(sprintf('Variable \'%s\' is not a class', $objname));
                         }
 
-                        $method = $ts[$last - 1]['value'];
+                        $method = $ts[$last - 1]["value"];
 
                         /* obj */
 
@@ -266,31 +274,31 @@ function parse( $code ) {
                         }
                     }
                 } else if ($last >= 3 &&
-                    $ts[0]['token'] != T_CLASS && /* if we are not in a class definition */
-                    $ts[$last - 1]['token'] == T_VARIABLE &&
-                    $ts[$last - 2]['token'] == T_OBJECT_OPERATOR &&
-                    $ts[$last - 3]['token'] == T_VARIABLE ) {
+                    $ts[0]["token"] != T_CLASS && /* if we are not in a class definition */
+                    $ts[$last - 1]["token"] == T_VARIABLE &&
+                    $ts[$last - 2]["token"] == T_OBJECT_OPERATOR &&
+                    $ts[$last - 3]["token"] == T_VARIABLE ) {
 
                     /* $object->$method( */
 
                     /* $object has to exist and has to be a object */
-                    $objname = $ts[$last - 3]['value'];
+                    $objname = $ts[$last - 3]["value"];
 
-                    if (!isset($GLOBALS[ltrim($objname, '$')])) {
+                    if (!isset($GLOBALS[ltrim($objname, "$")])) {
                         throw new Exception(sprintf('Variable \'%s\' is not set', $objname));
                     }
-                    $object = $GLOBALS[ltrim($objname, '$')];
+                    $object = $GLOBALS[ltrim($objname, "$")];
 
                     if (!is_object($object)) {
                         throw new Exception(sprintf('Variable \'%s\' is not a class', $objname));
                     }
 
-                    $methodname = $ts[$last - 1]['value'];
+                    $methodname = $ts[$last - 1]["value"];
 
-                    if (!isset($GLOBALS[ltrim($methodname, '$')])) {
+                    if (!isset($GLOBALS[ltrim($methodname, "$")])) {
                         throw new Exception(sprintf('Variable \'%s\' is not set', $methodname));
                     }
-                    $method = $GLOBALS[ltrim($methodname, '$')];
+                    $method = $GLOBALS[ltrim($methodname, "$")];
 
                     /* obj */
 
@@ -300,29 +308,29 @@ function parse( $code ) {
                     }
 
                 } else if ($last >= 6 &&
-                    $ts[0]['token'] != T_CLASS && /* if we are not in a class definition */
-                    $ts[$last - 1]['token'] == T_STRING &&
-                    $ts[$last - 2]['token'] == T_OBJECT_OPERATOR &&
-                    $ts[$last - 3]['token'] == ']' &&
+                    $ts[0]["token"] != T_CLASS && /* if we are not in a class definition */
+                    $ts[$last - 1]["token"] == T_STRING &&
+                    $ts[$last - 2]["token"] == T_OBJECT_OPERATOR &&
+                    $ts[$last - 3]["token"] == "]" &&
                         /* might be anything as index */
-                    $ts[$last - 5]['token'] == '[' &&
-                    $ts[$last - 6]['token'] == T_VARIABLE ) {
+                    $ts[$last - 5]["token"] == "[" &&
+                    $ts[$last - 6]["token"] == T_VARIABLE ) {
 
                     /* $object[...]->method( */
 
                     /* $object has to exist and has to be a object */
-                    $objname = $ts[$last - 6]['value'];
+                    $objname = $ts[$last - 6]["value"];
 
-                    if (!isset($GLOBALS[ltrim($objname, '$')])) {
+                    if (!isset($GLOBALS[ltrim($objname, "$")])) {
                         throw new Exception(sprintf('Variable \'%s\' is not set', $objname));
                     }
-                    $array = $GLOBALS[ltrim($objname, '$')];
+                    $array = $GLOBALS[ltrim($objname, "$")];
 
                     if (!is_array($array)) {
                         throw new Exception(sprintf('Variable \'%s\' is not a array', $objname));
                     }
 
-                    $andx = $ts[$last - 4]['value'];
+                    $andx = $ts[$last - 4]["value"];
 
                     if (!isset($array[$andx])) {
                         throw new Exception(sprintf('%s[\'%s\'] is not set', $objname, $andx));
@@ -334,7 +342,7 @@ function parse( $code ) {
                         throw new Exception(sprintf('Variable \'%s\' is not a class', $objname));
                     }
 
-                    $method = $ts[$last - 1]['value'];
+                    $method = $ts[$last - 1]["value"];
 
                     /* obj */
 
@@ -344,47 +352,47 @@ function parse( $code ) {
                     }
 
                 } else if ($last >= 3 &&
-                    $ts[0]['token'] != T_CLASS && /* if we are not in a class definition */
-                    $ts[$last - 1]['token'] == T_STRING &&
-                    $ts[$last - 2]['token'] == T_DOUBLE_COLON &&
-                    $ts[$last - 3]['token'] == T_STRING ) {
+                    $ts[0]["token"] != T_CLASS && /* if we are not in a class definition */
+                    $ts[$last - 1]["token"] == T_STRING &&
+                    $ts[$last - 2]["token"] == T_DOUBLE_COLON &&
+                    $ts[$last - 3]["token"] == T_STRING ) {
 
                     /* Class::method() */
 
                     /* $object has to exist and has to be a object */
-                    $classname = $ts[$last - 3]['value'];
+                    $classname = $ts[$last - 3]["value"];
 
                     if (!class_exists($classname)) {
                         throw new Exception(sprintf('Class \'%s\' doesn\'t exist', $classname));
                     }
 
-                    $method = $ts[$last - 1]['value'];
+                    $method = $ts[$last - 1]["value"];
 
                     if (!in_array($method, get_class_methods($classname))) {
                         throw new Exception(sprintf("Class '%s' doesn't have a method named '%s'",
                             $classname, $method));
                     }
                 } else if ($last >= 3 &&
-                    $ts[0]['token'] != T_CLASS && /* if we are not in a class definition */
-                    $ts[$last - 1]['token'] == T_VARIABLE &&
-                    $ts[$last - 2]['token'] == T_DOUBLE_COLON &&
-                    $ts[$last - 3]['token'] == T_STRING ) {
+                    $ts[0]["token"] != T_CLASS && /* if we are not in a class definition */
+                    $ts[$last - 1]["token"] == T_VARIABLE &&
+                    $ts[$last - 2]["token"] == T_DOUBLE_COLON &&
+                    $ts[$last - 3]["token"] == T_STRING ) {
 
                     /* $var::method() */
 
                     /* $object has to exist and has to be a object */
-                    $classname = $ts[$last - 3]['value'];
+                    $classname = $ts[$last - 3]["value"];
 
                     if (!class_exists($classname)) {
                         throw new Exception(sprintf('Class \'%s\' doesn\'t exist', $classname));
                     }
 
-                    $methodname = $ts[$last - 1]['value'];
+                    $methodname = $ts[$last - 1]["value"];
 
-                    if (!isset($GLOBALS[ltrim($methodname, '$')])) {
+                    if (!isset($GLOBALS[ltrim($methodname, "$")])) {
                         throw new Exception(sprintf('Variable \'%s\' is not set', $methodname));
                     }
-                    $method = $GLOBALS[ltrim($methodname, '$')];
+                    $method = $GLOBALS[ltrim($methodname, "$")];
 
                     if (!in_array($method, get_class_methods($classname))) {
                         throw new Exception(sprintf("Class '%s' doesn't have a method named '%s'",
@@ -392,15 +400,15 @@ function parse( $code ) {
                     }
 
                 } else if ($last >= 2 &&
-                    $ts[0]['token'] != T_CLASS && /* if we are not in a class definition */
-                    $ts[$last - 1]['token'] == T_STRING &&
-                    $ts[$last - 2]['token'] == T_NEW ) {
+                    $ts[0]["token"] != T_CLASS && /* if we are not in a class definition */
+                    $ts[$last - 1]["token"] == T_STRING &&
+                    $ts[$last - 2]["token"] == T_NEW ) {
 
                     /* new Class() */
 
                     /* don't care about this in a class ... { ... } */
 
-                    $classname = $ts[$last - 1]['value'];
+                    $classname = $ts[$last - 1]["value"];
 
                     if (!class_exists($classname)) {
                         throw new Exception(sprintf('Class \'%s\' doesn\'t exist', $classname));
@@ -417,31 +425,31 @@ function parse( $code ) {
                     }
 
                 } else if ($last >= 2 &&
-                    $ts[0]['token'] != T_CLASS && /* if we are not in a class definition */
-                    $ts[$last - 1]['token'] == T_STRING &&
-                    $ts[$last - 2]['token'] == T_FUNCTION ) {
+                    $ts[0]["token"] != T_CLASS && /* if we are not in a class definition */
+                    $ts[$last - 1]["token"] == T_STRING &&
+                    $ts[$last - 2]["token"] == T_FUNCTION ) {
 
                     /* make sure we are not a in class definition */
 
                     /* function a() */
 
-                    $func = $ts[$last - 1]['value'];
+                    $func = $ts[$last - 1]["value"];
 
                     if (function_exists($func)) {
                         throw new Exception(sprintf('Function \'%s\' is already defined', $func));
                     }
                 } else if ($last >= 4 &&
-                    $ts[0]['token'] == T_CLASS &&
-                    $ts[1]['token'] == T_STRING &&
-                    $ts[$last - 1]['token'] == T_STRING &&
-                    $ts[$last - 2]['token'] == T_FUNCTION ) {
+                    $ts[0]["token"] == T_CLASS &&
+                    $ts[1]["token"] == T_STRING &&
+                    $ts[$last - 1]["token"] == T_STRING &&
+                    $ts[$last - 2]["token"] == T_FUNCTION ) {
 
                     /* make sure we are not a in class definition */
 
                     /* class a { .. function a() ... } */
 
-                    $func = $ts[$last - 1]['value'];
-                    $classname = $ts[1]['value'];
+                    $func = $ts[$last - 1]["value"];
+                    $classname = $ts[1]["value"];
 
                     if (isset($methods[$func])) {
                         throw new Exception(sprintf("Can't redeclare method '%s' in Class '%s'", $func, $classname));
@@ -450,27 +458,27 @@ function parse( $code ) {
                     $methods[$func] = 1;
 
                 } else if ($last >= 1 &&
-                    $ts[0]['token'] != T_CLASS && /* if we are not in a class definition */
-                    $ts[0]['token'] != T_ABSTRACT && /* if we are not in a class definition */
-                    $ts[1]['token'] != T_CLASS && /* if we are not in a class definition */
-                    $ts[$last - 1]['token'] == T_STRING ) {
+                    $ts[0]["token"] != T_CLASS && /* if we are not in a class definition */
+                    $ts[0]["token"] != T_ABSTRACT && /* if we are not in a class definition */
+                    $ts[1]["token"] != T_CLASS && /* if we are not in a class definition */
+                    $ts[$last - 1]["token"] == T_STRING ) {
                     /* func() */
-                    $funcname = $ts[$last - 1]['value'];
+                    $funcname = $ts[$last - 1]["value"];
 
                     if (!function_exists($funcname)) {
                         throw new Exception(sprintf("Function %s() doesn't exist", $funcname));
                     }
                 } else if ($last >= 1 &&
-                    $ts[0]['token'] != T_CLASS && /* if we are not in a class definition */
-                    $ts[$last - 1]['token'] == T_VARIABLE ) {
+                    $ts[0]["token"] != T_CLASS && /* if we are not in a class definition */
+                    $ts[$last - 1]["token"] == T_VARIABLE ) {
 
                     /* $object has to exist and has to be a object */
-                    $funcname = $ts[$last - 1]['value'];
+                    $funcname = $ts[$last - 1]["value"];
 
-                    if (!isset($GLOBALS[ltrim($funcname, '$')])) {
+                    if (!isset($GLOBALS[ltrim($funcname, "$")])) {
                         throw new Exception(sprintf('Variable \'%s\' is not set', $funcname));
                     }
-                    $func = $GLOBALS[ltrim($funcname, '$')];
+                    $func = $GLOBALS[ltrim($funcname, "$")];
 
                     if (!function_exists($func)) {
                         throw new Exception(sprintf("Function %s() doesn't exist", $func));
@@ -480,30 +488,30 @@ function parse( $code ) {
 
                 array_push($braces, $token);
                 break;
-            case '{':
+            case "{":
                 $need_return = 0;
 
                 if ($last >= 2 &&
-                    $ts[$last - 1]['token'] == T_STRING &&
-                    $ts[$last - 2]['token'] == T_CLASS ) {
+                    $ts[$last - 1]["token"] == T_STRING &&
+                    $ts[$last - 2]["token"] == T_CLASS ) {
 
                     /* class name { */
 
-                    $classname = $ts[$last - 1]['value'];
+                    $classname = $ts[$last - 1]["value"];
 
                     if (class_exists($classname, false)) {
                         throw new Exception(sprintf("Class '%s' can't be redeclared", $classname));
                     }
                 } else if ($last >= 4 &&
-                    $ts[$last - 1]['token'] == T_STRING &&
-                    $ts[$last - 2]['token'] == T_EXTENDS &&
-                    $ts[$last - 3]['token'] == T_STRING &&
-                    $ts[$last - 4]['token'] == T_CLASS ) {
+                    $ts[$last - 1]["token"] == T_STRING &&
+                    $ts[$last - 2]["token"] == T_EXTENDS &&
+                    $ts[$last - 3]["token"] == T_STRING &&
+                    $ts[$last - 4]["token"] == T_CLASS ) {
 
                     /* class classname extends classname { */
 
-                    $classname = $ts[$last - 3]['value'];
-                    $extendsname = $ts[$last - 1]['value'];
+                    $classname = $ts[$last - 3]["value"];
+                    $extendsname = $ts[$last - 1]["value"];
 
                     if (class_exists($classname, false)) {
                         throw new Exception(sprintf("Class '%s' can't be redeclared",
@@ -514,15 +522,15 @@ function parse( $code ) {
                             $classname, $extendsname));
                     }
                 } else if ($last >= 4 &&
-                    $ts[$last - 1]['token'] == T_STRING &&
-                    $ts[$last - 2]['token'] == T_IMPLEMENTS &&
-                    $ts[$last - 3]['token'] == T_STRING &&
-                    $ts[$last - 4]['token'] == T_CLASS ) {
+                    $ts[$last - 1]["token"] == T_STRING &&
+                    $ts[$last - 2]["token"] == T_IMPLEMENTS &&
+                    $ts[$last - 3]["token"] == T_STRING &&
+                    $ts[$last - 4]["token"] == T_CLASS ) {
 
                     /* class name implements interface { */
 
-                    $classname = $ts[$last - 3]['value'];
-                    $implements = $ts[$last - 1]['value'];
+                    $classname = $ts[$last - 3]["value"];
+                    $implements = $ts[$last - 1]["value"];
 
                     if (class_exists($classname, false)) {
                         throw new Exception(sprintf("Class '%s' can't be redeclared",
@@ -536,25 +544,25 @@ function parse( $code ) {
 
                 array_push($braces, $token);
                 break;
-            case '}':
+            case "}":
                 $need_return = 0;
-            case ')':
+            case ")":
                 array_pop($braces);
                 break;
-            case '[':
-                if ($ts[0]['token'] != T_CLASS && /* if we are not in a class definition */
-                    $ts[0]['token'] != T_ABSTRACT && /* if we are not in a class definition */
-                    $ts[1]['token'] != T_CLASS && /* if we are not in a class definition */
-                    $ts[$last - 1]['token'] == T_VARIABLE) {
+            case "[":
+                if ($ts[0]["token"] != T_CLASS && /* if we are not in a class definition */
+                    $ts[0]["token"] != T_ABSTRACT && /* if we are not in a class definition */
+                    $ts[1]["token"] != T_CLASS && /* if we are not in a class definition */
+                    $ts[$last - 1]["token"] == T_VARIABLE) {
                     /* $a[] only works on array and string */
 
                     /* $object has to exist and has to be a object */
-                    $objname = $ts[$last - 1]['value'];
+                    $objname = $ts[$last - 1]["value"];
 
-                    if (!isset($GLOBALS[ltrim($objname, '$')])) {
+                    if (!isset($GLOBALS[ltrim($objname, "$")])) {
                         throw new Exception(sprintf('Variable \'%s\' is not set', $objname));
                     }
-                    $obj = $GLOBALS[ltrim($objname, '$')];
+                    $obj = $GLOBALS[ltrim($objname, "$")];
 
                     if (is_object($obj)) {
                         throw new Exception(sprintf('Objects (%s) don\'t support array access operators', $objname));
@@ -569,20 +577,20 @@ function parse( $code ) {
 
     $last = count($ts) - 1;
     if ($last >= 2 &&
-        $ts[$last - 0]['token'] == T_STRING &&
-        $ts[$last - 1]['token'] == T_DOUBLE_COLON &&
-        $ts[$last - 2]['token'] == T_STRING ) {
+        $ts[$last - 0]["token"] == T_STRING &&
+        $ts[$last - 1]["token"] == T_DOUBLE_COLON &&
+        $ts[$last - 2]["token"] == T_STRING ) {
 
         /* Class::constant */
 
         /* $object has to exist and has to be a object */
-        $classname = $ts[$last - 2]['value'];
+        $classname = $ts[$last - 2]["value"];
 
         if (!class_exists($classname)) {
             throw new Exception(sprintf('Class \'%s\' doesn\'t exist', $classname));
         }
 
-        $constname = $ts[$last - 0]['value'];
+        $constname = $ts[$last - 0]["value"];
 
         $c = new ReflectionClass($classname);
         if (!$c->hasConstant($constname)) {
@@ -590,13 +598,13 @@ function parse( $code ) {
                 $classname, $constname));
         }
     } else if ($last == 0 &&
-        $ts[$last - 0]['token'] == T_VARIABLE ) {
+        $ts[$last - 0]["token"] == T_VARIABLE ) {
 
         /* $var */
 
-        $varname = $ts[$last - 0]['value'];
+        $varname = $ts[$last - 0]["value"];
 
-        if (!isset($GLOBALS[ltrim($varname, '$')])) {
+        if (!isset($GLOBALS[ltrim($varname, "$")])) {
             throw new Exception(sprintf('Variable \'%s\' is not set', $varname));
         }
     }
@@ -604,7 +612,7 @@ function parse( $code ) {
 
     $need_more = (count($braces) > 0) || $open_comment;
 
-    if ($need_more || ';' === $token) {
+    if ($need_more || ";" === $token) {
         $need_semicolon = 0;
     }
 
@@ -613,9 +621,9 @@ function parse( $code ) {
     }
 
     if ($need_more) {
-      $_SESSION['partial'] = $eval;
+      $_SESSION["partial"] = $eval;
     } else {
-      $_SESSION['code'] = $eval;
+      $_SESSION["code"] = $eval;
     }
 
     return $need_more;
