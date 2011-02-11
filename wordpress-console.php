@@ -5,7 +5,7 @@ Plugin URI: http://github.com/sant0sk1/wordpress-console
 Description: An interactive console for WordPress developers
 Author: Jerod Santo
 Author URI: http://jerodsanto.net
-Version: 0.3.4
+Version: 0.3.5
 */
 
 if ( ! function_exists( 'is_ssl' ) ) :
@@ -25,7 +25,7 @@ function is_ssl() {
 endif;
 
 class WordPressConsole {
-  public  $version = '0.3.4';
+  public  $version = '0.3.5';
   private $url;
   private $secret;
 
