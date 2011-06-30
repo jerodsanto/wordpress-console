@@ -86,10 +86,11 @@
                   } else if (j.length == 1) {
                     input.val(j).focus();
                   } else {
-                    // print 3-column listing of array values
+                    // print 3-column listing of array values, 1-column is return full parameter
                     buffer_to_longest(j);
                     while (j.length > 0) {
-                      var line = j.splice(0,3);
+					  var column = (getCookie("wordpress_console_show_parameter") == 1) ? 1 : 3 ;
+                      var line = j.splice(0,column);
                       self.print(line.join(" "));
                     }
                     self.doPrompt();
@@ -150,7 +151,9 @@
           case "help": case "?":
             self.print("\nWhat's New:\n" +
             "  Keyboard shortcuts: ctrl+l = clear, ctrl+a = goto start, ctrl+e = goto end\n" +
-            "  Admin functions: add_user(), wp_delete_user(), and friends!\n" +
+			"  Press Tab key for auto completion\n" +
+            "  Admin functions: add_user(), wp_delete_user(), and friends, support native PHP as well!\n" +
+			"  'ClassName::' without the quotes + Tab Key will return result for the class\n" + 
             "\n" +
             "Special Commands:\n" +
             "  clear  (c) = clears the console output\n" +
@@ -216,7 +219,8 @@
         type:     "POST",
         dataType: "json",
         data: {
-          "root": self.root
+          "root": self.root,
+		  'show_parameter': getCookie("wordpress_console_show_parameter"),
         }
       };
       var key = null;
@@ -316,8 +320,58 @@
       range.select();
     }
   }
-
+  
   $(function() {
     window.wpConsole = new $.wpConsole();
   });
+  
+	$(document).ready(function() {
+		$("#shell_show_parameter_chkbx").checked = getCookie("wordpress_console_show_parameter");
+		
+		$("#shell_show_parameter_chkbx").click(function(){
+			
+			if ($("#shell_show_parameter_chkbx").is(":checked")) {
+				setCookie("wordpress_console_show_parameter", 1, 360);
+			}
+			else {     
+				setCookie("wordpress_console_show_parameter", 0, 360);
+			}
+		});
+	});
+  
+	function setCookie(c_name, value, expiredays) {
+		var exdate = new Date();
+		exdate.setDate(exdate.getDate() + expiredays);
+		
+		document.cookie = c_name + "=" + escape(value) + ((expiredays==null) ? "" : ";expires=" + exdate.toGMTString());
+		
+		c_name = null;
+		value = null;
+		expiredays = null;
+		exdate = null;
+	}
+
+	function getCookie(c_name) {
+		var value = " ";
+
+		if (document.cookie.length > 0) {
+			var c_start = document.cookie.indexOf(c_name + "=");
+			if (c_start != -1) {
+				c_start = c_start + c_name.length + 1;
+				var c_end = document.cookie.indexOf(";", c_start);
+				if (c_end == -1) {
+					c_end = document.cookie.length;
+				}
+				value = unescape(document.cookie.substring(c_start, c_end));
+				c_end = null;
+			}
+			c_start = null;
+		}
+		
+		c_name = null;
+		
+		return value;
+	}
+  
 })(jQuery);
+
