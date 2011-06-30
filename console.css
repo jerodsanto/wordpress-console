@@ -57,3 +57,13 @@
 #wrapper #shell a:visited {
   color: #FFFFFF;
 }
+#wrapper #shell_control_panel {
+  font-family: Tahoma,Arial;
+  font-size: 10pt;
+  text-align:right;
+  color: #333;
+  background: none repeat scroll 0 0 #E6E8F2;
+  border-top: 1px solid #EEEFEE;
+  border-bottom: 1px solid #EEEFEE;
+  padding: 2px;
+}
