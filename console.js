@@ -330,12 +330,10 @@
 		
 		$("#shell_show_parameter_chkbx").click(function(){
 			
-			if ($("#shell_show_parameter_chkbx").is(":checked"))
-			{
+			if ($("#shell_show_parameter_chkbx").is(":checked")) {
 				setCookie("wordpress_console_show_parameter", 1, 360);
 			}
-			else
-			{     
+			else {     
 				setCookie("wordpress_console_show_parameter", 0, 360);
 			}
 		});

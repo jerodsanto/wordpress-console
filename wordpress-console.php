@@ -25,7 +25,7 @@ function is_ssl() {
 endif;
 
 class WordPressConsole {
-  public  $version = '0.3.6';
+  public  $version = '0.3.5';
   private $url;
   private $secret;
 
