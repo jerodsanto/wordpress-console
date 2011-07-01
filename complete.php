@@ -32,7 +32,6 @@ else{
 }
 
 // returns array of possible matches
-// returns array of possible matches
 function complete($string, $show_parameter){
   /**
    * parse the line-buffer backwards to see if we have a
@@ -155,7 +154,6 @@ function complete($string, $show_parameter){
     if (preg_match("/^{$string}/", $v)){
       $m[] = $v.'::';
     }
-    //$m[] = class_info($v, $show_parameter);
   }
 
   $c = get_defined_constants();
@@ -166,7 +164,6 @@ function complete($string, $show_parameter){
     }
   }
 
-  /* taken from http://de3.php.net/manual/en/reserved.php */
   /* taken from http://de3.php.net/manual/en/reserved.php */
   $reserved[] = 'abstract';
   $reserved[] = 'and';
@@ -356,7 +353,7 @@ function get_class_structure($class_name){
   return $class_info;
 }
 
-
+/*
 function class_info($class_name, $show_parameter = true){
   // load the class structure
   $class_info = get_class_structure($class_name);
@@ -402,6 +399,7 @@ function class_info($class_name, $show_parameter = true){
 
   return $string .= "\n".'END OF CLASS '.$class_info['name']."\n\n\n";
 }
+*/
 
 function class_method_info($class_name, $method_name, $show_parameter){
   // load the class structure
