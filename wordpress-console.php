@@ -25,7 +25,7 @@ function is_ssl() {
 endif;
 
 class WordPressConsole {
-  public  $version = '0.3.5';
+  public  $version = '0.3.6';
   private $url;
   private $secret;
 
@@ -62,6 +62,11 @@ class WordPressConsole {
     <div class="wrap">
       <h2>WordPress Console: "?" for help menu</h2>
       <div id="wrapper">
+		<div id="shell_control_panel">
+			<div class="shell_controls">
+				<label>Show parameter: <input id="shell_show_parameter_chkbx" type="checkbox" name="show_parameter" /></label>
+			</div>
+		 <div>
       </div>
     </div><?php
   }
