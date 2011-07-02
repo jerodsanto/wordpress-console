@@ -56,7 +56,7 @@ function complete( $string, $show_parameter ) {
       if ( isset( $class_info['properties'] ) && !empty( $class_info['properties'] ) ) {
         $m = array_merge( $m, class_property_info( $GLOBALS[$name] ) );
       }
-
+      // return the methods and properties of the object
       return $m;
     }
   } else if ( preg_match( '#\$([A-Za-z0-9_]+)\[([^\]]+)\]->#', $string, $a ) ) {
@@ -75,6 +75,7 @@ function complete( $string, $show_parameter ) {
       if ( isset( $class_info['properties'] ) && !empty( $class_info['properties'] ) ) {
         $m = array_merge( $m, class_property_info( $GLOBALS[$name][$a[2]] ) );
       }
+	  // return the methods and properties of the object
       return $m;
     }
   } else if ( preg_match( '#([A-Za-z0-9_]+)::#', $string, $a ) ) {
@@ -94,7 +95,7 @@ function complete( $string, $show_parameter ) {
 
         $m = array_merge( $m, class_property_info( $name ) );
       }
-
+      // return the methods and properties of the object
       return $m;
     }
   } else if ( preg_match( '#\$([a-zA-Z]?[a-zA-Z0-9_]*)$#', $string ) ) {
@@ -117,7 +118,7 @@ function complete( $string, $show_parameter ) {
     if ( isset( $class_info['properties'] ) && !empty( $class_info['properties'] ) ) {
       $m = array_merge( $m, class_property_info( $name ) );
     }
-
+    // return the methods and properties of the class
     return $m;
   } else if ( preg_match( '#^:set #', $string ) ) {
     foreach( PHP_Shell_Options::getInstance()->getOptions()as $v ) {
@@ -128,13 +129,13 @@ function complete( $string, $show_parameter ) {
   }
 
   $f = get_defined_functions();
-
+  // loop through all the internal functions, only return those that match the search string
   foreach( $f['internal'] as $v ) {
     if ( preg_match( "/^{$string}/", $v ) ) {
       $m[] = function_info( $v, $show_parameter );
     }
   }
-
+  // loop through all the user functions, only return those that match the search string
   foreach( $f['user'] as $v ) {
     if ( preg_match( "/^{$string}/", $v ) ) {
       $m[] = function_info( $v, $show_parameter );
@@ -142,7 +143,7 @@ function complete( $string, $show_parameter ) {
   }
 
   $c = get_declared_classes();
-
+  // loop through all the declared classes only return those that match the search string
   foreach( $c as $v ) {
     if ( preg_match( "/^{$string}/", $v ) ) {
       $m[] = $v.'::';
@@ -150,7 +151,7 @@ function complete( $string, $show_parameter ) {
   }
 
   $c = get_defined_constants();
-
+  // loop through all the defined constants, only return those that match the search string
   foreach( $c as $k => $v ) {
     if ( preg_match( "/^{$string}/", $v ) ) {
       $m[] = $v;
@@ -218,7 +219,7 @@ function complete( $string, $show_parameter ) {
   $reserved[] = '__LINE__';
   $reserved[] = '__METHOD__';
 
-
+  // loop through all the reserved keywords, only return those that match the search string
   foreach( $reserved as $v ) {
     if ( preg_match( "/^{$string}/", $v ) ) {
       $m[] = $v;
@@ -295,6 +296,36 @@ function function_info( $function_name, $show_parameter = true ) {
   return $string;
 }
 
+/*
+	This function will return an array that describe the class structure
+	array(
+		'name' => 'class_name',
+		'parents' =>  array(
+							'type',...
+							),
+		'properties' => array(
+							array(
+								'property1' => array(
+													
+												),...
+												),...
+							}
+						,
+		'methods' => array(
+						'method1' => array(
+										'modifiers' => array(
+															'type',...
+															),
+										//'inherited' => 'parent'
+										'parameters' => array(
+														'$parameter1' => array(
+																		'optional' => bool,
+																		'default_value' => ''
+																	),...
+													)
+					),...
+		)
+*/
 function get_class_structure( $class_name ) {
   // variable to store class information
   $class_info;
@@ -344,6 +375,7 @@ function get_class_structure( $class_name ) {
   return $class_info;
 }
 
+// return a nicely formatted string describing a particular class method
 function class_method_info( $class_name, $method_name, $show_parameter ) {
   // load the class structure
   $class_info = get_class_structure( $class_name );
@@ -377,6 +409,7 @@ function class_method_info( $class_name, $method_name, $show_parameter ) {
   return $string;
 }
 
+// return a nicely formatted string describing a particular class methods and properties
 function class_property_info( $class_name ) {
   // load the class structure
   $properties_info = get_class_structure( $class_name );
