@@ -25,9 +25,7 @@ if ( isset( $_POST['partial'] ) ) {
   $candidates = complete( $m[0], $show_parameter );
   sort( $candidates );
   die( json_encode( ( array )$candidates ) );
-}
-
- else {
+} else {
   error( 'Error initializing session.' );
 }
 
