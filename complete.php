@@ -16,11 +16,11 @@ if ( isset( $_POST['partial'] ) ) {
     return ;
   }
 
-  $show_parameter = ( isset( $_POST['show_parameter'] ) && $_POST['show_parameter'] == 1 ) ? true : false;
-
   if ( !preg_match( '#(((?:\$)?(?:[0-9a-z_-])*)(?:(?:\[(?:[^\]]+)\]->)|(?:>|::))?)$#i', $partial, $m ) ) {
     die( json_encode( false ) );
   }
+  
+  $show_parameter = ( isset( $_POST['show_parameter'] ) && $_POST['show_parameter'] == 1 ) ? true : false;
 
   $candidates = complete( $m[0], $show_parameter );
   sort( $candidates );
@@ -33,7 +33,7 @@ if ( isset( $_POST['partial'] ) ) {
 
 // returns array of possible matches
 function complete( $string, $show_parameter ) {
-  /**
+   /**
    * parse the line-buffer backwards to see if we have a
    * - constant
    * - function
@@ -233,14 +233,14 @@ function complete( $string, $show_parameter ) {
 /*
 This function will return an array that describe the class structure
 array(
-'name' => 'function_name',
-'parameters' => array(
-'$parameter1' => array(
-'optional' => bool,
-'default_value' => ''
-),...
-)
-)
+  'name' => 'function_name',
+  'parameters' => array(
+                       '$parameter1' => array(
+                                             'optional' => bool,
+                                             'default_value' => ''
+                                            ),...
+                        )
+    )
  */
 function get_function_structure( $function_name ) {
   // variable to store class information
@@ -345,54 +345,6 @@ function get_class_structure( $class_name ) {
   }
   return $class_info;
 }
-
-/*
-function class_info($class_name, $show_parameter = true){
-// load the class structure
-$class_info = get_class_structure($class_name);
-
-$string = "\n".$class_info['name'];
-
-if ($show_parameter){
-$string .= '::';
-
-if (isset($class_info['parents']) && !empty($class_info['parents'])){
-$string .= 'inherit from '.''.implode(', ', $class_info['parents']);
-}
-
-$string .= "\n";
-
-if (isset($class_info['methods']) && !empty($class_info['methods'])){
-// loop through all the methods
-foreach($class_info['methods'] as $method_name => $method_info){
-$string .= implode(' ', $method_info['modifiers']).' '.$method_name.'(';
-
-// loop through all the method parameters
-$params;
-
-if (isset($method_info['parameters']) && !empty($method_info['parameters'])){
-foreach($method_info['parameters'] as $parameter_name => $parameter_info){
-if ($parameter_info['optional']){
-$params[] = '['.$parameter_name.' = \''.$parameter_info['default_value'].'\']';
-}
-else{
-$params[] = $parameter_name;
-}
-}
-$string .= (count($params)) ? implode(', ', $params): '';
-}
-
-
-$string .= ')'."\n";
-
-}
-
-}
-}
-
-return $string .= "\n".'END OF CLASS '.$class_info['name']."\n\n\n";
-}
- */
 
 function class_method_info( $class_name, $method_name, $show_parameter ) {
   // load the class structure
