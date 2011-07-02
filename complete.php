@@ -230,7 +230,7 @@ function complete( $string, $show_parameter ) {
 }
 
 /*
-This function will return an array that describe the class structure
+This function will return an array that describe the function
 array(
   'name' => 'function_name',
   'parameters' => array(
@@ -316,7 +316,6 @@ function function_info( $function_name, $show_parameter = true ) {
 										'modifiers' => array(
 															'type',...
 															),
-										//'inherited' => 'parent'
 										'parameters' => array(
 														'$parameter1' => array(
 																		'optional' => bool,
