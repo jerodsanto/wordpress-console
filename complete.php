@@ -98,9 +98,13 @@ function complete( $string, $show_parameter ) {
       // return the methods and properties of the object
       return $m;
     }
-  } else if ( preg_match( '#\$([a-zA-Z]?[a-zA-Z0-9_]*)$#', $string ) ) {
-    $m = array_keys( $GLOBALS );
-
+  } else if ( preg_match( '#\$([a-zA-Z]?[a-zA-Z0-9_]*)$#', $string, $g ) ) {
+      // loop through all the globals, only return those that match the search string
+      foreach( array_keys( $GLOBALS ) as $v ) {
+        if ( preg_match( "/^{$g[1]}/", $v ) ) {
+          $m[] = $v;
+        }
+      }
     return $m;
   } else if ( preg_match( '#new #', $string ) ) {
     $c = get_declared_classes();
