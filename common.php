@@ -2,7 +2,7 @@
 # try to load the wordpress environment from passed in location known by the client
 # otherwise, fall back to the mostly (but sometimes not) safe assumption that it is
 # up 3 directories from this file.
-if ( isset( $_POST["root"] ) ) {
+if ( isset( $_POST["root"] ) && is_dir( $_POST["root"] ) ) {
   require_once( $_POST["root"] . "/wp-load.php" );
 } else {
   require_once( dirname( __FILE__ ) . "/../../../wp-load.php" );
