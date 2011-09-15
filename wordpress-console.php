@@ -40,7 +40,7 @@ class WordPressConsole {
       $plugin_url = str_replace( 'http://' , 'https://' , $plugin_url );
     }
 
-    $this->url    = $plugin_url . "/" . str_replace( basename( __FILE__ ), "", plugin_basename( __FILE__ ) );
+    $this->url    = $plugin_url . "/" . $this->_get_plugin_directory() . "/";
     $this->secret = $this->get_secret();
     add_action( 'admin_menu', array( &$this, 'init' ) );
   }
@@ -85,10 +85,17 @@ class WordPressConsole {
     return $secret;
   }
 
+  protected function _get_plugin_directory() {
+    $parts = explode( DIRECTORY_SEPARATOR, plugin_basename( __FILE__ ));
+    unset( $parts[array_search( basename( __FILE__ ), $parts )] );
+    return array_pop( $parts );
+  }
+
   function WordPressConsole() { // legacy
     $this->__construct();
   }
 }
-
+error_reporting(E_ALL);
+ini_set('display_errors', 'On');
 new WordPressConsole;
 ?>
