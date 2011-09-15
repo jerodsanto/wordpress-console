@@ -86,7 +86,7 @@ class WordPressConsole {
   }
 
   protected function _get_plugin_directory() {
-    $parts = explode( DIRECTORY_SEPARATOR, plugin_basename( __FILE__ ));
+    $parts = explode( DIRECTORY_SEPARATOR, plugin_basename( __FILE__ ) );
     unset( $parts[array_search( basename( __FILE__ ), $parts )] );
     return array_pop( $parts );
   }
@@ -95,7 +95,8 @@ class WordPressConsole {
     $this->__construct();
   }
 }
-error_reporting(E_ALL);
-ini_set('display_errors', 'On');
+
+error_reporting( E_ALL );
+ini_set( 'display_errors', 'On' );
 new WordPressConsole;
 ?>
