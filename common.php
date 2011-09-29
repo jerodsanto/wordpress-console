@@ -14,7 +14,10 @@ if ( !session_id() ) {
   session_start();
 }
 
-ob_end_clean();
+if ( ob_get_length() > 0 ) {
+  ob_end_clean();
+}
+
 error_reporting( E_ALL ^ E_PARSE );
 set_time_limit( 0 );
 
