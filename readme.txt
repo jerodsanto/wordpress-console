@@ -14,9 +14,7 @@ This plugin adds a "Console" page to the administrator's menu which provides a J
 
 = New In This Version =
 
-1.  WordPress 3.2.1 compatibility
-2.  Security fixes
-3.  Ability to load plugin when symlinked
+1.  Bug fixes
 
 **SECURITY NOTICE**
 
@@ -48,6 +46,9 @@ You should fork the project on [GitHub](http://github.com/sant0sk1/wordpress-con
 2.  Tab Completion Example
 
 == Changelog ==
+
+= 0.3.7 =
+* Bug fixes
 
 = 0.3.6 =
 * WordPress 3.2.1 compatibility
