@@ -86,9 +86,7 @@ class WordPressConsole {
   }
 
   protected function _get_plugin_directory() {
-    $parts = explode( DIRECTORY_SEPARATOR, plugin_basename( __FILE__ ) );
-    unset( $parts[array_search( basename( __FILE__ ), $parts )] );
-    return array_pop( $parts );
+     return basename(dirname(__FILE__));
   }
 
   function WordPressConsole() { // legacy
