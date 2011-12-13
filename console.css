@@ -19,7 +19,7 @@
   font-family: monaco, 'lucida console', 'courier new', 'courier', monospace;
   font-size: 10pt;
   line-height: 1.25em;
-  
+
 }
 #wrapper #shell .row,
 #wrapper #shell .row form {
@@ -37,6 +37,7 @@
 #wrapper #shell .result pre {
   font-size: 10pt;
   font-family: monaco, 'lucida console', 'courier new', 'courier', monospace;
+  margin: 0;
 }
 
 #wrapper #shell .prompt {
