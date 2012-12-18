@@ -1,9 +1,9 @@
 === WordPress Console ===
 Contributors: sant0sk1
 Donate link: http://jerodsanto.net
-Tags: admin, development, ajax, interactive, developer, shell, console
+Tags: admin, development, ajax, interactive, developer, shell, console, terminal
 Requires at least: 2.8
-Tested up to: 3.3
+Tested up to: 3.5
 Stable tag: trunk
 
 An interactive console for WordPress developers
@@ -14,8 +14,7 @@ This plugin adds a "Console" page to the administrator's menu which provides a J
 
 = New In This Version =
 
-1.  WordPress 3.3 Compatibility
-2.  Windows bug fix
+1.  WordPress 3.5 Compatibility
 
 **SECURITY NOTICE**
 
@@ -47,6 +46,9 @@ You should fork the project on [GitHub](http://github.com/sant0sk1/wordpress-con
 2.  Tab Completion Example
 
 == Changelog ==
+
+= 0.3.9 -
+* WordPress 3.5 Compatibility
 
 = 0.3.8 =
 * WordPress 3.3 Compatibility
