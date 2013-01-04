@@ -30,18 +30,9 @@ class WordPressConsole {
   private $secret;
 
   function __construct() {
-    if ( version_compare( get_bloginfo( 'version' ) , '3.0' , '<' ) ) {
-      $plugin_url = ( get_option( 'siteurl' ) . "/wp-content/plugins" );
-    } else {
-      $plugin_url = WP_PLUGIN_URL;
-    }
-
-    if ( is_ssl() ) {
-      $plugin_url = str_replace( 'http://' , 'https://' , $plugin_url );
-    }
-
-    $this->url    = $plugin_url . "/" . $this->_get_plugin_directory() . "/";
+    $this->url    = plugin_dir_url( __FILE__ );
     $this->secret = $this->get_secret();
+
     add_action( 'admin_menu', array( &$this, 'init' ) );
   }
 
